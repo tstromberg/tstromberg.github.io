@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="UTF-8">
+  <title>Arch Linux UEFI Install Guide | tstromberg.io</title>
+  <meta name="viewport" content="width=device-width,user-scalable=no,maximum-scale=1,initial-scale=1">
+  <link rel="canonical" href="http://tstromberg.github.io/post/archlinux_uefi_install/"/>
+  <link rel="stylesheet" href="http://tstromberg.github.io/css/responsive.css">
+  <link rel="stylesheet" href="http://tstromberg.github.io/css/theme.css">
+  <link rel="stylesheet" href="http://tstromberg.github.io/css/highlight_tomorrow.css">
+  <link href="http://tstromberg.github.io/index.xml" rel="alternate" type="application/rss+xml" title="tstromberg.io" />
+  <link href="http://tstromberg.github.io/index.xml" rel="feed" type="application/rss+xml" title="tstromberg.io" />
+  <link href='https://fonts.googleapis.com/css?family=Raleway:700,400,200' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+  <div class="container row">
+    <header role="banner" class="row">
+      <h1 class="col span_4"><a href="http://tstromberg.github.io/">tstromberg.io</a></h1>
+
+      <nav role="navigation" class="row">
+        <ul>
+        <li><a href="http://tstromberg.github.io/about" target="_blank">about</a></li>
+        <li><a href="https://plus.google.com/&#43;ThomasStromberg" target="_blank">g+</a></li>
+        <li><a href="https://github.com/tstromberg" target="_blank">github</a></li>
+        <li><a href="https://twitter.com/helixblue" target="_blank">twitter</a></li>
+      </ul>
+      </nav>
+      <h2 class="col span_8">some dusty corner of cyberspace</h2>
+    </header>
+    <div class="divider row">
+      <span class="col span_6 grey">&nbsp;</span>
+      <span class="col span_2 white">&nbsp;</span>
+      <span class="col span_2 grey">&nbsp;</span>
+      <span class="col span_1 white">&nbsp;</span>
+      <span class="col span_1 grey">&nbsp;</span>
+    </div>
+
+
+  
+  <main id="single" role="main">
+    <div class="article-header">
+      <h1>Arch Linux UEFI Install Guide</h1>
+      <div class="meta">
+        Dec 28, 2015 &nbsp;
+        
+      </div>
+    </div>
+    <article>
+      
+
+<p>I ended up replacing the boot drive to my home workstation, and figured I should try Arch Linux again. The
+last time I did so, I spent hours trying to figure out how to get o UEFI install to work. Two years later, all
+the arcane commands required to make it work appear to no longer be necessary.</p>
+
+<p>I would even go so far as saying that it is quite straight forward:</p>
+
+<h2 id="creating-the-usb-stick-mac-os-x:58d215349a7f0fdb6b5b2ed4428b3b6c">Creating the USB stick (Mac OS X):</h2>
+
+<pre><code>% sudo diskutil unmountDisk /dev/disk3
+% sudo dd if=$HOME/Downloads/archlinux-2015.12.01-dual.iso of=/dev/rdisk3 bs=1m
+</code></pre>
+
+<h2 id="making-a-bootable-arch-linux-system:58d215349a7f0fdb6b5b2ed4428b3b6c">Making a bootable Arch Linux system.</h2>
+
+<p>Once you are able to boot on the USB volume, it&rsquo;s mostly the usual bits, with the addition of one extra partition:</p>
+
+<pre><code># enable wireless networking
+wifi-menu
+
+# look at available disks
+fdisk -l
+
+# setup boot disk partitions
+cgdisk /dev/sdX
+New: (1) 250M partition of type ef00 # EFI
+New: (2) 750M partition of type 8300 # boot
+New: (3) remaining space used for partition of type 8300 # /
+</code></pre>
+
+<p>I tend to shift around my partitions a lot, so I&rsquo;m using volume management (pv|vg|lv)create to create all my non-boot volumes.:</p>
+
+<pre><code># verify that kernel sees new table
+fdisk -l /dev/sdX
+
+# format partitions, using a volume manager for the 3rd partition.
+mkfs.vfat -F32 /dev/sdX1
+mkfs.ext2 /dev/sdX2
+pvcreate /dev/sdx3
+vgcreate bootvg /dev/sdx3
+lvcreate --size 30G bootvg --name root
+mkfs.ext4 /dev/mapper/bootvg-root
+
+# mount our partitions
+mount /dev/mapper/bootvg-root /mnt
+mkdir /mnt/boot
+mount /dev/sdX2 /mnt/boot
+mkdir /mnt/boot/efi
+mount /dev/sdX1 /mnt/boot/efi
+</code></pre>
+
+<p>Now that we are done playing around with partitions, lets make it a viable system. Note the grub-efi_x86_64 package:</p>
+
+<pre><code>pacstrap /mnt base base-devel grub-efi-x86_64 zsh vim git efibootmgr dialog \
+  wpa_supplicant
+
+# basic configuration of the system.
+genfstab -pU /mnt &gt;&gt; /mnt/etc/fstab
+arch-chroot /mnt /bin/bash
+echo computer_name &gt; /etc/hostname
+locale-gen
+echo LANG=en_US.UTF-8 &gt;&gt; /etc/locale.conf
+echo LANGUAGE=en_US &gt;&gt; /etc/locale.conf
+echo LC_ALL=C &gt;&gt; /etc/locale.conf
+
+ln -s /usr/share/zoneinfo/US/Pacific /etc/localtime
+hwclock --systohc --utc
+passwd
+useradd - -g users -G wheel,storage,power,audio -s /bin/zsh me
+passwd me
+
+# make system bootable
+vim /etc/mkinitcpio.conf
+# Add 'ext4' to MODULES
+# Add 'lvm2' to HOOKS before filesystems
+mkinitcpio -p linux
+grubinstall
+grub-mkconfig -o /boot/grub/grub.cfg
+</code></pre>
+
+<p>You are done now, lets call it a day:</p>
+
+<pre><code>exit
+umount -R /mnt
+swapoff -a
+reboot
+</code></pre>
+
+<p>After the reboot, I enabled some basic networking so that I could also get in remotely:</p>
+
+<pre><code>sudo wifi-menu
+sudo pacman -S openssh
+sudo systemctl start sshd.service
+</code></pre>
+
+<p>All in all, everything worked pretty well, though I had to install the <a href="http://wiki.archlinux.org/index.php/Microcode">Intel Microcode</a> package to make the KDE screensaver stop crashing. Who would have thought?</p>
+
+    </article>
+    
+
+<script type="text/javascript">
+     
+    var disqus_shortname = '';
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by
+ Disqus.</a></noscript>
+
+
+
+  </main>
+  <nav class="pagination">
+    
+      <span class="previous">&larr; <a href="http://tstromberg.github.io/post/hello_world/" rel="prev">hello world</a></span>
+    
+    
+  </nav>
+
+  
+  <footer role="contentinfo" class="row"></footer>
+</div>
+
+<script src="http://tstromberg.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
+
+

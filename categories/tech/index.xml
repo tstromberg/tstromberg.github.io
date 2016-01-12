@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tech on tstromberg.io</title>
+    <link>http://tstromberg.github.io/categories/tech/</link>
+    <description>Recent content in Tech on tstromberg.io</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 23 Dec 2015 09:52:39 -0800</lastBuildDate>
+    <atom:link href="http://tstromberg.github.io/categories/tech/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>hello world</title>
+      <link>http://tstromberg.github.io/post/hello_world/</link>
+      <pubDate>Wed, 23 Dec 2015 09:52:39 -0800</pubDate>
+      
+      <guid>http://tstromberg.github.io/post/hello_world/</guid>
+      <description>&lt;p&gt;So, I decided to try &lt;a href=&#34;http://gohugo.io/&#34;&gt;hugo&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;It&amp;rsquo;s a CMS that serves static content, which lends itself to highly performant and secure delivery of web pages. No idea what I will do with this yet.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

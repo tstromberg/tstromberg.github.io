@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>tstromberg.io</title>
+    <link>http://tstromberg.github.io/</link>
+    <description>Recent content on tstromberg.io</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 28 Dec 2015 19:50:36 -0800</lastBuildDate>
+    <atom:link href="http://tstromberg.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Arch Linux UEFI Install Guide</title>
+      <link>http://tstromberg.github.io/post/archlinux_uefi_install/</link>
+      <pubDate>Mon, 28 Dec 2015 19:50:36 -0800</pubDate>
+      
+      <guid>http://tstromberg.github.io/post/archlinux_uefi_install/</guid>
+      <description>
+
+&lt;p&gt;I ended up replacing the boot drive to my home workstation, and figured I should try Arch Linux again. The
+last time I did so, I spent hours trying to figure out how to get o UEFI install to work. Two years later, all
+the arcane commands required to make it work appear to no longer be necessary.&lt;/p&gt;
+
+&lt;p&gt;I would even go so far as saying that it is quite straight forward:&lt;/p&gt;
+
+&lt;h2 id=&#34;creating-the-usb-stick-mac-os-x:58d215349a7f0fdb6b5b2ed4428b3b6c&#34;&gt;Creating the USB stick (Mac OS X):&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;% sudo diskutil unmountDisk /dev/disk3
+% sudo dd if=$HOME/Downloads/archlinux-2015.12.01-dual.iso of=/dev/rdisk3 bs=1m
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;making-a-bootable-arch-linux-system:58d215349a7f0fdb6b5b2ed4428b3b6c&#34;&gt;Making a bootable Arch Linux system.&lt;/h2&gt;
+
+&lt;p&gt;Once you are able to boot on the USB volume, it&amp;rsquo;s mostly the usual bits, with the addition of one extra partition:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# enable wireless networking
+wifi-menu
+
+# look at available disks
+fdisk -l
+
+# setup boot disk partitions
+cgdisk /dev/sdX
+New: (1) 250M partition of type ef00 # EFI
+New: (2) 750M partition of type 8300 # boot
+New: (3) remaining space used for partition of type 8300 # /
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I tend to shift around my partitions a lot, so I&amp;rsquo;m using volume management (pv|vg|lv)create to create all my non-boot volumes.:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# verify that kernel sees new table
+fdisk -l /dev/sdX
+
+# format partitions, using a volume manager for the 3rd partition.
+mkfs.vfat -F32 /dev/sdX1
+mkfs.ext2 /dev/sdX2
+pvcreate /dev/sdx3
+vgcreate bootvg /dev/sdx3
+lvcreate --size 30G bootvg --name root
+mkfs.ext4 /dev/mapper/bootvg-root
+
+# mount our partitions
+mount /dev/mapper/bootvg-root /mnt
+mkdir /mnt/boot
+mount /dev/sdX2 /mnt/boot
+mkdir /mnt/boot/efi
+mount /dev/sdX1 /mnt/boot/efi
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now that we are done playing around with partitions, lets make it a viable system. Note the grub-efi_x86_64 package:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pacstrap /mnt base base-devel grub-efi-x86_64 zsh vim git efibootmgr dialog \
+  wpa_supplicant
+
+# basic configuration of the system.
+genfstab -pU /mnt &amp;gt;&amp;gt; /mnt/etc/fstab
+arch-chroot /mnt /bin/bash
+echo computer_name &amp;gt; /etc/hostname
+locale-gen
+echo LANG=en_US.UTF-8 &amp;gt;&amp;gt; /etc/locale.conf
+echo LANGUAGE=en_US &amp;gt;&amp;gt; /etc/locale.conf
+echo LC_ALL=C &amp;gt;&amp;gt; /etc/locale.conf
+
+ln -s /usr/share/zoneinfo/US/Pacific /etc/localtime
+hwclock --systohc --utc
+passwd
+useradd - -g users -G wheel,storage,power,audio -s /bin/zsh me
+passwd me
+
+# make system bootable
+vim /etc/mkinitcpio.conf
+# Add &#39;ext4&#39; to MODULES
+# Add &#39;lvm2&#39; to HOOKS before filesystems
+mkinitcpio -p linux
+grubinstall
+grub-mkconfig -o /boot/grub/grub.cfg
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You are done now, lets call it a day:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;exit
+umount -R /mnt
+swapoff -a
+reboot
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;After the reboot, I enabled some basic networking so that I could also get in remotely:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo wifi-menu
+sudo pacman -S openssh
+sudo systemctl start sshd.service
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;All in all, everything worked pretty well, though I had to install the &lt;a href=&#34;http://wiki.archlinux.org/index.php/Microcode&#34;&gt;Intel Microcode&lt;/a&gt; package to make the KDE screensaver stop crashing. Who would have thought?&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>hello world</title>
+      <link>http://tstromberg.github.io/post/hello_world/</link>
+      <pubDate>Wed, 23 Dec 2015 09:52:39 -0800</pubDate>
+      
+      <guid>http://tstromberg.github.io/post/hello_world/</guid>
+      <description>&lt;p&gt;So, I decided to try &lt;a href=&#34;http://gohugo.io/&#34;&gt;hugo&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;It&amp;rsquo;s a CMS that serves static content, which lends itself to highly performant and secure delivery of web pages. No idea what I will do with this yet.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>about</title>
+      <link>http://tstromberg.github.io/about/</link>
+      <pubDate>Wed, 23 Dec 2015 09:52:22 -0800</pubDate>
+      
+      <guid>http://tstromberg.github.io/about/</guid>
+      <description>&lt;p&gt;I am a systems engineer based out of San Francisco, and work at a rather large search engine of sorts.&lt;/p&gt;
+
+&lt;p&gt;When I&amp;rsquo;m not behind a keyboard, I prefer to be cycling or turning my daughters into pizza.&lt;/p&gt;
+
+&lt;p&gt;Though nearly all of my code is custom closed-source solutions, there are a few random open-source projects I&amp;rsquo;ve been able to contribute slivers of code to:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;FreeBSD&lt;/li&gt;
+&lt;li&gt;namebench&lt;/li&gt;
+&lt;li&gt;Ruby&lt;/li&gt;
+&lt;li&gt;zsh&lt;/li&gt;
+&lt;li&gt;Bugzilla&lt;/li&gt;
+&lt;li&gt;Mozilla&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;.. and a few other open-source projects I wildly endorse:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Go&lt;/li&gt;
+&lt;li&gt;vim&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This blog is powered by &lt;a href=&#34;http://gethugo.io/&#34;&gt;Hugo&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
