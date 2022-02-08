@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html><head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>The anatomy of a great playbook entry - thomas strömberg</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="What if you could easily reduce the length of outages by 3X?  According to the SRE book, &#34;recording t..." />
+	<meta property="og:image" content=""/>
+	<meta property="og:title" content="The anatomy of a great playbook entry" />
+<meta property="og:description" content="What if you could easily reduce the length of outages by 3X?  According to the SRE book, &#34;recording t..." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://stromberg.org/t/posts/2021/the-anatomy-of-a-great-playbook-entry-35od/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-05-21T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-05-21T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="The anatomy of a great playbook entry"/>
+<meta name="twitter:description" content="What if you could easily reduce the length of outages by 3X?  According to the SRE book, &#34;recording t..."/>
+<script src="https://stromberg.org/t/js/feather.min.js"></script>
+	
+	
+        <link href="https://stromberg.org/t/css/fonts.b685ac6f654695232de7b82a9143a46f9e049c8e3af3a21d9737b01f4be211d1.css" rel="stylesheet">
+	
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="https://stromberg.org/t/css/main.2f9b5946627215dc1ae7fa5f82bfc9cfcab000329136befeea5733f21e77d68f.css" />
+	
+	
+		
+		
+		<link rel="stylesheet" type="text/css" href="https://stromberg.org/t/css/override.747ca27b4957fe1ec179b364fe6b7b1c416904d055ac3984b19ba356b2859925.css">
+		
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="https://stromberg.org/t/">thomas strömberg</a>
+	</div>
+	<nav>
+		
+		<a href="/t/">home</a>
+		
+		<a href="/t/posts">posts</a>
+		
+		<a href="/t/about">about</a>
+		
+		<a href="/t/tags">tags</a>
+		
+		
+	</nav>
+</header>
+
+<main>
+	<article>
+		<div class="title">
+			<h1 class="title">The anatomy of a great playbook entry</h1>
+			<div class="meta">Posted on May 21, 2021</div>
+		</div>
+		
+
+		<section class="body">
+			<p>What if you could easily reduce the length of outages by 3X?</p>
+<p>According to the <a href="https://sre.google/sre-book/introduction/">SRE book</a>, &ldquo;recording the best practices ahead of time in a playbook produces roughly a 3x improvement in MTTR&rdquo;.  This improvement mirrors my experience with well-written playbooks.</p>
+<p>So what makes a playbook entry &ldquo;great&rdquo;?</p>
+<h2 id="philosophy">Philosophy</h2>
+<p>Remember how you felt in your first on-call rotation, when you were paged at 3am for a system you barely understood? <strong>Write your playbook entries for that person.</strong></p>
+<p>Playbooks should provide just enough context to confidently work through an incident, without providing extraneous content that will be a burden to keep up-to-date.</p>
+<p>Be wary of playbooks that offer exact remediation steps: these are often a sign of sacrificing human blood to a system that should be automated.</p>
+<h2 id="discovery">Discovery</h2>
+<p>Alerts should always include the relevant playbook URL. Otherwise, you will introduce human error by introducing the possibility of the responder following the incorrect playbook.</p>
+<p>Consider including the alert name in the playbook URL to make it easier to find. This also the alert template to be templatized in some systems. For example: <code>https://playbooks/%%ALERT_NAME%%</code></p>
+<h2 id="structure">Structure</h2>
+<p>Playbooks are the easiest to scan through in an emergency when they have a consistent structure. The exact best structure may differ depending on the organization, but this is what has worked for me:</p>
+<p>The structure that works best is highly dependent on your team&rsquo;s culture, but this is what has worked for me:</p>
+<ul>
+<li>
+<p><strong>Severity</strong>: How to assess the criticality of this alert from your team&rsquo;s point of view. Is it a slow-burning issue that generates tickets, a critical paging event, or does the severity depend on the duration?</p>
+</li>
+<li>
+<p><strong>Impact</strong>: How are your customers impacted by this alert? Often a one-liner, for example: &ldquo;None immediately. If ignored, may result in revenue-impacting customer provisioning failures due to resource exhaustion&rdquo;</p>
+</li>
+</ul>
+<ul>
+<li>
+<p><strong>Metrics</strong>: 1-2 graphs showing the impact, duration, and if the effect is worsening. Inline live-updating graphs work best, as they can prevent the incident responder from making unnecessary changes when the problem is dissipating. Hyperlinks are nearly as good.</p>
+</li>
+<li>
+<p><strong>Background</strong>: What should a new person on the on-call rotation know about this system? Be terse, providing a hyperlink for more information and/or an architectural diagram. To reduce maintenance burden and cognitive load during incident response, share this section between multiple playbook entries via templating.</p>
+</li>
+<li>
+<p><strong>Mitigation</strong>: What are the recommended steps to mitigate the issue? This is often in checklist-style and may include steps for rolling back or redirecting traffic.</p>
+</li>
+<li>
+<p><strong>Debugging</strong>: How should one get started digging into why this alert is firing? For example:</p>
+<ol>
+<li>Check for recent fatal error messages:</li>
+<li>Check the cluster for free disk space:</li>
+<li>Check <!-- raw HTML omitted --> to see when the last release went out</li>
+</ol>
+</li>
+<li>
+<p><strong>References</strong>: Links to the alert configuration, or code that generates the metric used by the alert, can be useful in understanding the underlying behavior. Post-mortems can also be valuable.</p>
+</li>
+</ul>
+<h2 id="formatting">Formatting</h2>
+<ul>
+<li>Be concise</li>
+<li>Bulleted or numbered lists instead of paragraphs.</li>
+</ul>
+<p>The <a href="https://kubernetes.io/docs/contribute/style/style-guide/">Kubernetes Documentation Style Guide</a>  has great recommendations for technical documentation, but the most important for playbooks is: <strong>make your commands trivial to copy and paste.</strong></p>
+<ul>
+<li>Do not include the command prompt. S
+<ul>
+<li>See: <a href="https://tanelpoder.com/posts/how-to-stay-safe-in-shell/">data loss due to &gt; character in prompt</a></li>
+</ul>
+</li>
+<li>Separate commands from example output</li>
+<li>Do not include real but unrelated host, site, or cluster names in your example command.
+<ul>
+<li>I once saw an outage spread when a responder copied an example command with the intent to edit the hostnames before pressing enter. They pressed enter first.</li>
+</ul>
+</li>
+</ul>
+<h2 id="maintenance">Maintenance</h2>
+<p>Keep playbooks up to date by:</p>
+<ul>
+<li>
+<p>Regularly scheduled <a href="%5Bhttps://sre.google/sre-book/accelerating-sre-on-call/">&ldquo;Wheel of Misfortune&rdquo; role-playing game sessions</a>, where the previous on-call engineer walks the current on-call engineer through a pager response scenario.</p>
+</li>
+<li>
+<p>Post-mortem action items that suggest playbook updates to decrease the resolution time for future pages for the same alert.</p>
+</li>
+</ul>
+<p>Big-bang efforts such as auditing all of the playbooks for relevance are best made once initially, to get the playbooks into the same structure. I have never seen quarterly playbook reviews work.</p>
+<p><em>Special thanks to <a href="https://josebiro.medium.com/">Joseph Bironas</a> for editorial feedback and ideas for this article.</em></p>
+
+		</section>
+
+		<div class="post-tags">
+			
+			
+			
+		</div>
+	</article>
+</main>
+<footer>
+<hr><a class="soc" href="https://github.com/tstromberg" title="GitHub"><i data-feather="github"></i></a>|<a class="soc" href="https://twitter.com/thomrstrom" title="Twitter"><i data-feather="twitter"></i></a>|⚡️ Built with <a href="https://gohugo.io">Hugo</a>
+</footer>
+
+
+<script>
+      feather.replace()
+</script></div>
+    </body>
+</html>

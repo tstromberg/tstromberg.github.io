@@ -1,0 +1,51 @@
+baseURL = "https://stromberg.org/t/"
+languageCode = "en-us"
+title = "thomas strömberg"
+theme="archie"
+copyright = ""
+
+# Code Highlight
+pygmentsstyle = "monokai"
+pygmentscodefences = true
+pygmentscodefencesguesssyntax = true
+
+paginate=15 # articles per page
+
+[params]
+	mode="light"
+	useCDN=false # don't use CDNs for fonts and icons, instead serve them locally.
+	subtitle = ""
+	customcss = ["css/override.css"]
+
+# Social Tags
+
+[[params.social]]
+name = "GitHub"
+icon = "github"
+url = "https://github.com/tstromberg"
+
+[[params.social]]
+name = "Twitter"
+icon = "twitter"
+url = "https://twitter.com/thomrstrom"
+
+# Main menu Items
+
+[[menu.main]]
+name = "home"
+url = "/"
+weight = 1
+
+[[menu.main]]
+name = "posts"
+url = "/posts"
+weight = 2
+
+[[menu.main]]
+name = "about"
+url = "/about"
+weight = 3
+
+[[menu.main]]
+name = "tags"
+url = "/tags"

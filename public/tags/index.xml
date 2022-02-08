@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on thomas strömberg</title>
+    <link>https://stromberg.org/t/tags/</link>
+    <description>Recent content in Tags on thomas strömberg</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 20 Jan 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://stromberg.org/t/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>cycling</title>
+      <link>https://stromberg.org/t/tags/cycling/</link>
+      <pubDate>Thu, 20 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://stromberg.org/t/tags/cycling/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
