@@ -160,31 +160,33 @@ h5,
 h6 {
     font-size: 1.2rem;
     margin-top: 2em;
+    font-family: titleFont;
 }
 
 h1::before {
     color: var(--maincolor);
-    content: '# ';
+    content: '> ';
 }
 
 h2::before {
     color: var(--maincolor);
-    content: '## ';
+    content: '>> ';
 }
 
 h3::before {
     color: var(--maincolor);
-    content: '### ';
+    content: '>>> ';
 }
 
 h4::before {
     color: var(--maincolor);
-    content: '#### ';
+    content: >>>> ';
+
 }
 
 h5::before {
     color: var(--maincolor);
-    content: '##### ';
+    content: '>>>>> ';
 }
 
 h6::before {

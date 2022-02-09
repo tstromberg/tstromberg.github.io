@@ -2,29 +2,33 @@
 kind: post
 draft: false
 date: "2022-01-21T11:36:17.085124-08:00"
-title: OpenBSD on the Framework DIY laptop
+title: OpenBSD on the Framework laptop
 
 # contumacious —  https://www.dictionary.com/e/word-of-the-day/
 #    adjective: stubbornly perverse or rebellious; willfully and obstinately disobedient.
 ---
 
+![Framework laptop outside](framework-laptop-outside.jpg)
+
 While preparing for my first week at [Chainguard](https://chainguard.dev/), the CEO mentioned that I should order my own laptop. As a ~15 person startup, there isn't an IT department to handle these sorts of things. 
 
-In 2022, the default laptop of choice for a software engineer working on cloud infrastructure is the [Apple M1 Powerbook](https://apple.com/powerbook). They hit nearly all the checkboxes: a great screen, powerful CPUs, and battery life that is the envy of any laptop in their class. The arm64 based Macs are fantastic: in fact, I'm typing this from my personal M1 MacBook Air. 
-
-A few thoughts dissuaded me from selecting yet another MacBook for this job:
+In 2022, the default laptop of choice for a software engineer working on cloud infrastructure is the [Apple M1 Powerbook](https://apple.com/powerbook). They hit nearly all the checkboxes: a great screen, powerful CPUs, and battery life that is the envy of any laptop in their class. The arm64 based Macs are fantastic: in fact, I'm typing this from my personal M1 MacBook Air. Ever the contrarian, I however felt that:
 
 * Working at a company that embraces a secure-by-default stance should use an operating system that matches philosophically
-* As a software engineer, using a different environment than my coworkers ensures that I will be forced to learn   the underlying internals of how the system works
-* As an open-source contributor, using a different operating system than other contributors helps with open-source inclusiveness, diversity, and promotes cleaner architecture.
+* Using a non-standard environment ensures that I will need to learn the underlying system internals
+* As an open-source contributor, supporting alternative platforms promotes inclusiveness, diversity, and clean architecture.
 
-The clear hardware alternative for open-source developers in 2022? The Framework Laptop. It ships with an open-source firmware, is available without a closed-source operating system, and is designed to be user upgradeable. 
+The clear hardware choice for rebellious open-source developers in 2022? The Framework Laptop. It ships with open-source firmware, is available without a closed-source operating system, and is designed to be user upgradeable. 
 
 OpenBSD has always been a contumacious alternative, particularly on a laptop. That said, if you work in computer security, you owe it to yourself to try OpenBSD some time: if only to learn about the impact of a secure-by-default stance has on user behavior. While I expected OpenBSD to be painful on a laptop, I was comforted when I found this another blogger, Joshua Stein, who had [detailed their experience](https://jcs.org/2021/08/06/framework) (with much better photos)
 
 ## Assembly
 
+![Framework Laptop Opened Up](framework-laptop-open.jpg)
+
 The Framework laptops come in two varieties: a pre-assembled laptop with Windows, and a DIY laptop without an OS. Since I wasn't planning on running Windows, I opted for the DIY version to save money. I won't repeat what is already in the excellent [Framework Laptop DIY Edition Quick Start Guide](https://guides.frame.work/Guide/Framework+Laptop+DIY+Edition+Quick+Start+Guide/57), but I'll share some notes.
+
+![Installing the network card](network-card-install.jpg)
 
 Difficulty levels:
 
@@ -33,12 +37,16 @@ Difficulty levels:
 * Wireless: easy to screw up once
 * I/O ports: Trivial (I opted for 3 USB-C ports and 1 USB-A port)
 
+![Framework I/O port installation](framework-laptop-io-install.jpg)
+
 Standout features:
+
+* The I/O ports have plenty of clearance from one another. The aesthetics aren't great, but it means that the ports on each side are always usable, contrary to my MacBook Air.
 
 * The case screws are all designed to be half-removed and stay in place. As someone who always loses screws, I really appreciated this.
 * The magnetic case clasps are also a surprisingly nice reassuring touch
 * If you make any changes to the RAM configuration, you will be staring at a black screen for the first 1-2 minutes of the next boot. It isn't reassuring at all.
-* The I/O ports are much further away from each other than on an MBP. The lines don't look great from an aesthetic perspective, but the distance makes it much easier to plug larger devices in, such as USB-C SD readers.
+
 * The webcam functions excellently (except in low-light).
 
 Due to the compatibility issues documented at [OpenBSD on the Framework Laptop](https://jcs.org/2021/08/06/framework), I bought the older Intel AX201NGW wireless card for a mere $13 on eBay.
@@ -86,6 +94,8 @@ sudo dd if=install70.img of=/dev/disk4 bs=1m                                    
 
 ## First Boot
 
+![First Boot](openbsd-first-boot.jpg)
+
 During the first boot, I found myself staring at a black screen for a few minutes. It turns out that this weird behavior is expected when booting a standard open-source operating system due to Secure Boot. 
 
 Once I rebooted, hit F2, and disabled secure boot, the laptop booted directly to USB.
@@ -97,15 +107,19 @@ Welcome to the OpenBSD/amd64 7.9 installation program.
 
 Since this is a corporate laptop, I certainly wanted to use Full Disk Encryption. I followed the [OpenBSD Full Disk Encryption](https://www.openbsd.org/faq/faq14.html#softraidFDE), which meant selecting the `(S)hell` option.
 
+![OpenBSD setup screen](openbsd-setup.jpg)
+
 While setting up the disks, the laptop suddenly lost power. What The Fudge? I was pretty sure it was related to my hardware, as I wasn't fully confident about was the DIMM insertion, so I attempted a RAM dance (something I learned from working in a Google Datacenter over a decade ago), but it happened again.
 
 I then tried reseating all the components, and it happened again. I found a [scary sounding forum thread](https://community.frame.work/t/instant-power-loss/13474/9), but it wasn't a complete match for what I was seeing. The power loss only seemed to happen while I was typing, and only after a couple of minutes. 
 
 In my 3rd install attempt, everything worked mysteriously. It was only later that I realized I was battling the same touchpad power event [https://jcs.org/2021/08/06/framework](detailed here). After the installation, I never encountered it again.
 
-One  post-installation surprise was that the Intel Wireless card didn't work - due to a missing firmware blob. I used an older EDIMax USB wireless card, and not only did it work great, but it magically allowed the Intel wireless card to work properly as OpenBSD downloads the necessary drivers during boot time via `fw_update`: if it has a working internet connection to begin with.
+One post-installation surprise was that the Intel Wireless card didn't work - due to a missing firmware blob. I used an older EDIMax USB wireless card, and not only did it work great, but it magically allowed the Intel wireless card to work properly as OpenBSD downloads the necessary drivers during boot time via `fw_update`: if it has a working internet connection to begin with.
 
 ## Post-Installation
+
+![Login screen](openbsd-login.jpg)
 
 I floundered about for a bit trying to choose which desktop environment to use, but eventually settled on [XFCE](https://xfce.org/). I never did get Gnome to work, but MATE worked properly once I ran:
 
@@ -186,7 +200,7 @@ staff:\
 	:tc=default:
 ```
 
-To play music, I installed [ncspot](https://github.com/hrkfdn/ncspot), a terminal Spotify player. It seems that the Spotify web client doesn't work without DRM plugins that are not shipped in Chromium or Firefox. One quirk I encountered was corrupt output when launched from XFCE, which can be fixed by adding `env TERM=xterm-256color LANG=en_US.UTF-8` to the launcher properties.
+To play music, I installed [ncspot](https://github.com/hrkfdn/ncspot), a terminal Spotify player. The Spotify web client requires DRM (Digital Rights Management) extensions, which are not supported on OpenBSD. ncspot requires extended terminal settings to avoid corrupt output: `env TERM=xterm-256color LANG=en_US.UTF-8`.
 
 ## Annoyances
 
@@ -196,11 +210,13 @@ The current annoyances with my configuration are:
 
 * Chromium / Google Meet: I never did get screen sharing to work, receiving only the following error: "Can't share your screen: Sorry, an error has occurred when screensharing." I was able to get it to function in Firefox by disabling pledge.
 
-* Zoom: With Firefox, Zoom reports `Zoom is not supported on your operating system`, but can be accessed using a User-Agent switcher extension. With Chromium, it works, but reports `Your browser doesn't support using computer's Audio device`. 
+* Zoom: With Firefox, Zoom reports `Zoom is not supported on your operating system`, but can be accessed using a User-Agent switcher extension. With Chromium, Zoom starts, but audio input doesn't work, reporting `Your browser doesn't support using computer's Audio device`. I haven't tried a user-agent switcher in Chromium.
 
-* Editors: While NeoVim is good, I miss VSCode. Perhaps [code-server](https://github.com/coder/code-server) will work with some elbow grease.
+* Editors: While NeoVim is good, I miss VSCode. Perhaps [code-server](https://github.com/coder/code-server) will work with some elbow grease. It requires a newer NodeJS than is available in OpenBSD packages, and my attempt to build an updated resulted in SIGABRT issues.
 
 * Cloud Native: Many common cloud-native tools only exist in a Linux-based universe. Don't expect Docker, Kubernetes, Podman, LIMA, kind, minikube, or ilk to function in OpenBSD. You can still build & push containers using [ko](https://github.com/google/ko) and sign containers using [cosign](github.com/sigstore/cosign/).
+
+* Resume after Suspend: I don't know if it's a thing with encrypted volumes, but I have yet to successfully resume after suspend: The fan spins, I see a login prompt, but am unable to type at it. I haven't tried very hard to fix this, but it does mean scarier `fsck` sessions at boot time than I'm used to.
 
 ## In Closing
 

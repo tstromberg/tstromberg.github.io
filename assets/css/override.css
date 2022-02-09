@@ -3,14 +3,29 @@
 :root {
     --maincolor: #FEEC00;
     --bordercl: #374243;
+    --blue: #414A5F;
+    --darkblue: #012354;
     --callouctcolor: #E7E347;
     --hovercolor: #012354;
     --darkMaincolor: #FEEC00;
 }
 
+
+/* 
+    Husky Colors
+    Dark Blue: #012354
+    Grey Blue: #414A5F
+    Blue: #083A6C
+    Darker Yellow: #E7E347
+    Yellow: #FEEC00
+    Grey: #374243
+    White: #DDDDDD    
+    */
+
 .meta {
     font-size: 1rem;
     margin-top: 0;
+    font-style: italic;
     padding-top: 0;
 }
 
@@ -26,25 +41,16 @@ p {
 h1.title {
     font-family: titleFont;
     color: #414A5F;
-    font-size: 3.5rem;
-    margin-bottom: 0.5em;
+    font-size: 4rem;
+    margin-bottom: 0.3em;
+    margin-top: 1em;
 }
 
 h2 {
-    font-size: 1.5rem;
+    font-size: 3rem;
+    margin-top: 1em;
+    margin-bottom: 0.25em;
 }
-
-
-/* 
-    Husky Colors
-    Dark Blue: #012354
-    Grey Blue: #414A5F
-    Blue: #083A6C
-    Darker Yellow: #E7E347
-    Yellow: #FEEC00
-    Grey: #374243
-    White: #DDDDDD    
-    */
 
 body {
     margin: 1em;
