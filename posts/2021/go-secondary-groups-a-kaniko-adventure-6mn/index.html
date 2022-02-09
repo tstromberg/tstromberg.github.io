@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html><head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Go &amp; secondary groups: a kaniko adventure! - thomas strömberg</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Originally posted on my personal blog in April 2020  I wanted to get my feet wet with understanding K..." />
+	<meta property="og:image" content=""/>
+	<meta property="og:title" content="Go &amp; secondary groups: a kaniko adventure!" />
+<meta property="og:description" content="Originally posted on my personal blog in April 2020  I wanted to get my feet wet with understanding K..." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://stromberg.org/t/posts/2021/go-secondary-groups-a-kaniko-adventure-6mn/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-02-26T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-02-26T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go &amp; secondary groups: a kaniko adventure!"/>
+<meta name="twitter:description" content="Originally posted on my personal blog in April 2020  I wanted to get my feet wet with understanding K..."/>
+<script src="https://stromberg.org/t/js/feather.min.js"></script>
+	
+	
+        <link href="https://stromberg.org/t/css/fonts.b685ac6f654695232de7b82a9143a46f9e049c8e3af3a21d9737b01f4be211d1.css" rel="stylesheet">
+	
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="https://stromberg.org/t/css/main.2f9b5946627215dc1ae7fa5f82bfc9cfcab000329136befeea5733f21e77d68f.css" />
+	
+	
+		
+		
+		<link rel="stylesheet" type="text/css" href="https://stromberg.org/t/css/override.747ca27b4957fe1ec179b364fe6b7b1c416904d055ac3984b19ba356b2859925.css">
+		
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="https://stromberg.org/t/">thomas strömberg</a>
+	</div>
+	<nav>
+		
+		<a href="/t/">home</a>
+		
+		<a href="/t/posts">posts</a>
+		
+		<a href="/t/about">about</a>
+		
+		<a href="/t/tags">tags</a>
+		
+		
+	</nav>
+</header>
+
+<main>
+	<article>
+		<div class="title">
+			<h1 class="title">Go &amp; secondary groups: a kaniko adventure!</h1>
+			<div class="meta">Posted on Feb 26, 2021</div>
+		</div>
+		
+
+		<section class="body">
+			<p><!-- raw HTML omitted -->Originally posted on my personal blog in April 2020<!-- raw HTML omitted --></p>
+<p>I wanted to get my feet wet with understanding <a href="https://github.com/GoogleContainerTools/kaniko">Kaniko</a>,
+an open-source in-cluster builder for Docker images. I happen to work with one of the maintainers, Tejal,
+and I asked her if there was any interesting UNIX-internals sort of bugs that might be interesting.</p>
+<p>Here&rsquo;s the <a href="https://github.com/GoogleContainerTools/kaniko/issues/1097">mystery issue</a>: &ldquo;The USER command does not set the correct gids, so extra groups are dropped&rdquo;. Here&rsquo;s an example to reproduce it:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">FROM ubuntu:latest
+RUN groupadd -g 20000 bar
+RUN groupadd -g 10000 foo
+RUN useradd -c &#34;Foo user&#34; -u 10000 -g 10000 -G bar -m foo
+RUN id foo
+USER foo
+RUN id
+</code></pre></div><p>In an ideal world, both &ldquo;id&rdquo; commands should give the same output, but the second one did not include <code>foo</code>&rsquo;s membership in <code>bar</code>. This definitely sounded
+like a secondary group issue. I happened to know that secondary groups were bolted onto the UNIX implementation some 10 years later than primary groups (SVR4, by way of BSD).</p>
+<h2 id="how-to-reproduce">How to reproduce</h2>
+<p>First, get a shell into the Kaniko debug image, mounting in the out/ and integration/ subdirectory:</p>
+<p><code>docker run -it --entrypoint /busybox/sh -v &quot;$HOME&quot;/.config/gcloud:/root/.config/gcloud -v (pwd)/integration:/workspace -v (pwd)/out:/out gcr.io/kaniko-project/executor:debug</code></p>
+<p>I placed their Dockerfile into <code>kaniko/integration/1097</code>, which was mounted as <code>/workspace</code>. I could then trivially reproduce their case using kaniko:</p>
+<p><code>/kaniko/executor -f 1097 --context=dir://workspace --destination=gcr.io/kaniko/test --tarPath=/tmp/image.tar --no-push</code></p>
+<h2 id="finding-the-culprit">Finding the culprit</h2>
+<p>The first question was: how does Kaniko implement user switching? Are they switching in such a way that populates secondary groups? I ask because the standard syscalls (<code>seteuid</code>, <code>setegid</code>) do not implement secondary groups: one has to instead call <a href="https://linux.die.net/man/2/setgroups"><code>setgroups</code></a>. Here&rsquo;s what I found:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">SysProcAttr</span>.<span style="color:#a6e22e">Credential</span> = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">syscall</span>.<span style="color:#a6e22e">Credential</span>{<span style="color:#a6e22e">Uid</span>: <span style="color:#a6e22e">uid</span>, <span style="color:#a6e22e">Gid</span>: <span style="color:#a6e22e">gid</span>}
+</code></pre></div><p><code>[SysProcAttr](https://golang.org/pkg/syscall/#SysProcAttr)</code> is not exactly a well-known feature in Go, but it&rsquo;s perfect for setting exec attributes such as:</p>
+<ul>
+<li><code>Chroot</code> - lock the process into a directory</li>
+<li><code>Pdeathsig</code> -  Signal that the process will get when its parent dies (Linux only)</li>
+<li>&hellip; and many options for user namespacing: handy for container tools.</li>
+</ul>
+<p>So, I figured it would be easy enough to improve the function in such a way that performs secondary group impersonation. The trick to you, dear reader, is to find the flaw!</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">impersonate</span>(<span style="color:#a6e22e">userStr</span> <span style="color:#66d9ef">string</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">syscall</span>.<span style="color:#a6e22e">Credential</span>, <span style="color:#66d9ef">error</span>) {
+   <span style="color:#f92672">...</span>
+   <span style="color:#a6e22e">groups</span> <span style="color:#f92672">:=</span> []<span style="color:#66d9ef">uint32</span>{}
+   <span style="color:#a6e22e">gidStr</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">u</span>.<span style="color:#a6e22e">GroupIds</span>()
+   <span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Infof</span>(<span style="color:#e6db74">&#34;groupstr: %s&#34;</span>, <span style="color:#a6e22e">gidStr</span>)
+
+   <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">g</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">gidStr</span> {
+       <span style="color:#a6e22e">i</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">strconv</span>.<span style="color:#a6e22e">ParseUint</span>(<span style="color:#a6e22e">g</span>, <span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">32</span>)
+       <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+           <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;parseuint&#34;</span>)
+       }
+       <span style="color:#a6e22e">groups</span> = append(<span style="color:#a6e22e">groups</span>, uint32(<span style="color:#a6e22e">i</span>))
+   }
+
+   <span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">syscall</span>.<span style="color:#a6e22e">Credential</span>{
+       <span style="color:#a6e22e">Uid</span>:    <span style="color:#a6e22e">uid</span>,
+       <span style="color:#a6e22e">Gid</span>:    <span style="color:#a6e22e">gid</span>,
+       <span style="color:#a6e22e">Groups</span>: <span style="color:#a6e22e">groups</span>,
+   }, <span style="color:#66d9ef">nil</span>
+}
+</code></pre></div><p>After running <code>make</code>, I hop back into the container to run the repro case, and I&rsquo;m perplexed by the log message:</p>
+<p><code>INFO[0013] u.GroupIds returned: []</code></p>
+<p>Is kaniko running in some alternate chroot universe where it can&rsquo;t see? I double check by adding a shell command:</p>
+<p><code>out, err = exec.Command(&quot;grep&quot;, &quot;foo&quot;, &quot;/etc/group&quot;).Output()</code></p>
+<p>The answer is no. At this point, there are only two options in my mind. Either this is a Go bug, or, if Go is using libc to make this call (likely),
+it&rsquo;s a libc bug, or at least a disagreement between the two systems. As soon as you have made the decision to blame the compiler, it&rsquo;s time to gather evidence, typically by making a simpler test case. I opt first to investigate if Go is using libc to look up the list of secondary groups, starting with:</p>
+<ul>
+<li><a href="https://golang.org/src/os/user/listgroups_unix.go">os/user/listgroups_unix.go</a></li>
+</ul>
+<p>A couple of nested functions later, and you can see that it&rsquo;s calling:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">mygetgrouplist</span>(<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">char</span><span style="color:#f92672">*</span> user, gid_t group, gid_t<span style="color:#f92672">*</span> groups, <span style="color:#66d9ef">int</span><span style="color:#f92672">*</span> ngroups) {
+  <span style="color:#66d9ef">return</span> getgrouplist(user, group, groups, ngroups);
+}
+</code></pre></div><p>This is almost the same implementation you see in busybox&rsquo;s <code>id</code> command <a href="https://github.com/brgl/busybox/blob/master/coreutils/id.c">source</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">get_groups</span>(<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>username, gid_t rgid, gid_t <span style="color:#f92672">*</span>groups, <span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>n)
+{
+  <span style="color:#66d9ef">int</span> m;
+   <span style="color:#66d9ef">if</span> (username) {
+   	 m <span style="color:#f92672">=</span> getgrouplist(username, rgid, groups, n);
+   	 <span style="color:#66d9ef">return</span> m;
+   }
+</code></pre></div><p>Now, it&rsquo;s possible that Go is setting <code>ngroups</code> to 0, so we just build a little test case program:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+    <span style="color:#a6e22e">u</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">user</span>.<span style="color:#a6e22e">Lookup</span>(<span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Args</span>[<span style="color:#ae81ff">1</span>])
+    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+   	 panic(<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;lookup failed: %v&#34;</span>, <span style="color:#a6e22e">err</span>))
+    }
+</code></pre></div><p>The test program runs great on macOS, but when I use <a href="https://github.com/karalabe/xgo">xgo</a> to cross-compile it for Linux, all it outputs is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">-rwxr-xr-x    1 0        0          2125099 Mar 28 20:26 ggroups-linux-amd64
+
+# ./ggroups-linux-amd64
+/busybox/sh: ./ggroups-linux-amd64: not found
+</code></pre></div><p>If you ever see this error in UNIX, it usually means one of three things:</p>
+<ul>
+<li>The program specifies an invalid <code>#!</code> line</li>
+<li>The binary needs a shared library that does not exist</li>
+<li>The binary is for the wrong architecture</li>
+</ul>
+<p>In this case, I suspected #2, because I see that busybox is in use, chances are pretty high that this Docker image lacks libc. This environment
+does not have <code>ldd</code>, but it has <code>strings</code>, so I can get some hints about the binary that was built:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">strings /out/ggroups-linux-amd64  | head
+bhkFaBAPgWy3KAp2RQcd/llKGprZSMM7cCxIzwmJ9/0QgnPM9q9pk--9IIyIXn/X9bTurj9MBmKtnVL-ANT
+/lib64/ld-linux-x86-64.so.2
+ATUSH
+</code></pre></div><p>It looks like the right architecture, but yeah, that library doesn&rsquo;t exist. Just to confirm my sanity, I confirmed this program works great in an ubuntu container. I immediately suspect that either kaniko&rsquo;s user environment is trash, or kaniko is up to shenanigans in their <code>Makefile</code>. The easier is easier to check, and it doesn&rsquo;t take long to notice:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-make" data-lang="make"><span style="color:#a6e22e">out/executor</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">$(</span>GO_FILES<span style="color:#66d9ef">)</span>
+	GOARCH<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>GOARCH<span style="color:#66d9ef">)</span> GOOS<span style="color:#f92672">=</span>linux CGO_ENABLED<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span> go build -ldflags <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>       <span style="color:#66d9ef">$(</span>GO_LDFLAGS<span style="color:#66d9ef">)</span> -o $@ <span style="color:#66d9ef">$(</span>EXECUTOR_PACKAGE<span style="color:#66d9ef">)</span>
+</code></pre></div><p>God damnit. kaniko works because they disable <code>cgo</code> to workaround the lack of a libc environment. Look back at <a href="https://golang.org/src/os/user/listgroups_unix.go">listgroups_unix.go</a> - it uses C code, and the build rule specifically states only to build with cgo. If we look at the fallback implementation, we see:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">func listGroups(*User) ([]string, error) {
+    if runtime.GOOS == &#34;android&#34; || runtime.GOOS == &#34;aix&#34; {
+        return nil, fmt.Errorf(&#34;user: GroupIds not implemented on %s&#34;, runtime.GOOS)
+    }
+    return nil, errors.New(&#34;user: GroupIds requires cgo&#34;)
+}
+</code></pre></div><p>But wait - we didn&rsquo;t see an error in our impersonate function! I try to compile it without cgo:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">env CGO_ENABLED=0 go run ggroups.go root
+panic: groupids failed: user: GroupIds requires cgo
+
+goroutine 1 [running]:
+main.main()
+    /Users/tstromberg/src/ggroups/ggroups.go:18 +0x117
+exit status 2
+</code></pre></div><h2 id="the-mystery-deepens">The mystery deepens</h2>
+<p>If you see an error in one environment, and not the other, chances are either:</p>
+<ul>
+<li>A compiler error</li>
+<li>A kernel error</li>
+<li>You forgot to check the error code.</li>
+</ul>
+<p>It&rsquo;s almost always the last option. Sure enough:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">   <span style="color:#a6e22e">gidStr</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">u</span>.<span style="color:#a6e22e">GroupIds</span>()
+   <span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Infof</span>(<span style="color:#e6db74">&#34;groupstr: %s&#34;</span>, <span style="color:#a6e22e">gidStr</span>)
+</code></pre></div><p>As soon as I noticed this, I walked away from my computer for an hour. I suggest you do the same.</p>
+
+		</section>
+
+		<div class="post-tags">
+			
+			
+			
+		</div>
+	</article>
+</main>
+<footer>
+<hr><a class="soc" href="https://github.com/tstromberg" title="GitHub"><i data-feather="github"></i></a>|<a class="soc" href="https://twitter.com/thomrstrom" title="Twitter"><i data-feather="twitter"></i></a>|⚡️ Built with <a href="https://gohugo.io">Hugo</a>
+</footer>
+
+
+<script>
+      feather.replace()
+</script></div>
+    </body>
+</html>

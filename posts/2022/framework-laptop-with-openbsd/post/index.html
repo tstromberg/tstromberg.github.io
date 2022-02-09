@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html><head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Framework DIY laptop build with OpenBSD - thomas strömberg</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="https://guides.frame.work/Guide/Framework&#43;Laptop&#43;DIY&#43;Edition&#43;Quick&#43;Start&#43;Guide/57
+OpenBSD Nightly snapshot from https://cdn.openbsd.org/pub/OpenBSD/snapshots/amd64/
+curl -O https://cdn.openbsd.org/pub/OpenBSD/snapshots/amd64/SHA256 Fri Jan 21 11:37:31 2022 shasum -c SHA256 &ndash;ignore-missing
+!  ~/Downloads  sudo diskutil list 10.2s  Fri Jan 21 11:39:15 2022 Password: /dev/disk0 (internal): #: TYPE NAME SIZE IDENTIFIER 0: GUID_partition_scheme 500.3 GB disk0 1: Apple_APFS_ISC ⁨⁩ 524.3 MB disk0s1 2: Apple_APFS ⁨Container disk3⁩ 494.4 GB disk0s2 3: Apple_APFS_Recovery ⁨⁩ 5.4 GB disk0s3
+/dev/disk3 (synthesized): #: TYPE NAME SIZE IDENTIFIER 0: APFS Container Scheme - &#43;494." />
+	<meta property="og:image" content=""/>
+	<meta property="og:title" content="Framework DIY laptop build with OpenBSD" />
+<meta property="og:description" content="https://guides.frame.work/Guide/Framework&#43;Laptop&#43;DIY&#43;Edition&#43;Quick&#43;Start&#43;Guide/57
+OpenBSD Nightly snapshot from https://cdn.openbsd.org/pub/OpenBSD/snapshots/amd64/
+curl -O https://cdn.openbsd.org/pub/OpenBSD/snapshots/amd64/SHA256 Fri Jan 21 11:37:31 2022 shasum -c SHA256 &ndash;ignore-missing
+!  ~/Downloads  sudo diskutil list 10.2s  Fri Jan 21 11:39:15 2022 Password: /dev/disk0 (internal): #: TYPE NAME SIZE IDENTIFIER 0: GUID_partition_scheme 500.3 GB disk0 1: Apple_APFS_ISC ⁨⁩ 524.3 MB disk0s1 2: Apple_APFS ⁨Container disk3⁩ 494.4 GB disk0s2 3: Apple_APFS_Recovery ⁨⁩ 5.4 GB disk0s3
+/dev/disk3 (synthesized): #: TYPE NAME SIZE IDENTIFIER 0: APFS Container Scheme - &#43;494." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://stromberg.org/t/posts/2022/framework-laptop-with-openbsd/post/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-01-21T11:36:17-08:00" />
+<meta property="article:modified_time" content="2022-01-21T11:36:17-08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Framework DIY laptop build with OpenBSD"/>
+<meta name="twitter:description" content="https://guides.frame.work/Guide/Framework&#43;Laptop&#43;DIY&#43;Edition&#43;Quick&#43;Start&#43;Guide/57
+OpenBSD Nightly snapshot from https://cdn.openbsd.org/pub/OpenBSD/snapshots/amd64/
+curl -O https://cdn.openbsd.org/pub/OpenBSD/snapshots/amd64/SHA256 Fri Jan 21 11:37:31 2022 shasum -c SHA256 &ndash;ignore-missing
+!  ~/Downloads  sudo diskutil list 10.2s  Fri Jan 21 11:39:15 2022 Password: /dev/disk0 (internal): #: TYPE NAME SIZE IDENTIFIER 0: GUID_partition_scheme 500.3 GB disk0 1: Apple_APFS_ISC ⁨⁩ 524.3 MB disk0s1 2: Apple_APFS ⁨Container disk3⁩ 494.4 GB disk0s2 3: Apple_APFS_Recovery ⁨⁩ 5.4 GB disk0s3
+/dev/disk3 (synthesized): #: TYPE NAME SIZE IDENTIFIER 0: APFS Container Scheme - &#43;494."/>
+<script src="https://stromberg.org/t/js/feather.min.js"></script>
+	
+	
+        <link href="https://stromberg.org/t/css/fonts.b685ac6f654695232de7b82a9143a46f9e049c8e3af3a21d9737b01f4be211d1.css" rel="stylesheet">
+	
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="https://stromberg.org/t/css/main.2f9b5946627215dc1ae7fa5f82bfc9cfcab000329136befeea5733f21e77d68f.css" />
+	
+	
+		
+		
+		<link rel="stylesheet" type="text/css" href="https://stromberg.org/t/css/override.747ca27b4957fe1ec179b364fe6b7b1c416904d055ac3984b19ba356b2859925.css">
+		
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="https://stromberg.org/t/">thomas strömberg</a>
+	</div>
+	<nav>
+		
+		<a href="/t/">home</a>
+		
+		<a href="/t/posts">posts</a>
+		
+		<a href="/t/about">about</a>
+		
+		<a href="/t/tags">tags</a>
+		
+		
+	</nav>
+</header>
+
+<main>
+	<article>
+		<div class="title">
+			<h1 class="title">Framework DIY laptop build with OpenBSD</h1>
+			<div class="meta">Posted on Jan 21, 2022</div>
+		</div>
+		
+
+		<section class="body">
+			<p><a href="https://guides.frame.work/Guide/Framework+Laptop+DIY+Edition+Quick+Start+Guide/57">https://guides.frame.work/Guide/Framework+Laptop+DIY+Edition+Quick+Start+Guide/57</a></p>
+<h2 id="openbsd">OpenBSD</h2>
+<p>Nightly snapshot from <a href="https://cdn.openbsd.org/pub/OpenBSD/snapshots/amd64/">https://cdn.openbsd.org/pub/OpenBSD/snapshots/amd64/</a></p>
+<p>curl -O <a href="https://cdn.openbsd.org/pub/OpenBSD/snapshots/amd64/SHA256">https://cdn.openbsd.org/pub/OpenBSD/snapshots/amd64/SHA256</a>                                                                                                       Fri Jan 21 11:37:31 2022
+shasum -c SHA256 &ndash;ignore-missing</p>
+<p>!  ~/Downloads  sudo diskutil list                                                                                                                                           10.2s  Fri Jan 21 11:39:15 2022
+Password:
+/dev/disk0 (internal):
+#:                       TYPE NAME                    SIZE       IDENTIFIER
+0:      GUID_partition_scheme                         500.3 GB   disk0
+1:             Apple_APFS_ISC ⁨⁩                        524.3 MB   disk0s1
+2:                 Apple_APFS ⁨Container disk3⁩         494.4 GB   disk0s2
+3:        Apple_APFS_Recovery ⁨⁩                        5.4 GB     disk0s3</p>
+<p>/dev/disk3 (synthesized):
+#:                       TYPE NAME                    SIZE       IDENTIFIER
+0:      APFS Container Scheme -                      +494.4 GB   disk3
+Physical Store disk0s2
+1:                APFS Volume ⁨Macintosh HD⁩            15.8 GB    disk3s1
+2:              APFS Snapshot ⁨com.apple.os.update-&hellip;⁩ 15.8 GB    disk3s1s1
+3:                APFS Volume ⁨Preboot⁩                 541.9 MB   disk3s2
+4:                APFS Volume ⁨Recovery⁩                844.8 MB   disk3s3
+5:                APFS Volume ⁨Data⁩                    450.8 GB   disk3s5
+6:                APFS Volume ⁨VM⁩                      12.9 GB    disk3s6
+7:                APFS Volume ⁨test⁩                    1.1 MB     disk3s7
+8:                APFS Volume ⁨u⁩                       1.1 MB     disk3s8</p>
+<p>/dev/disk4 (external, physical):
+#:                       TYPE NAME                    SIZE       IDENTIFIER
+0:     FDisk_partition_scheme                        *128.3 GB   disk4
+1:                 DOS_FAT_32 ⁨UNTITLED⁩                128.3 GB   disk4s1</p>
+<p>~/Downloads  sudo diskutil unmountDisk /dev/disk4                                                                                                                            1826ms  Fri Jan 21 11:39:18 2022
+Unmount of all volumes on disk4 was successful
+~/Downloads  sudo dd if=install70.img of=/dev/disk4 bs=1m                                                                                                                     197ms  Fri Jan 21 11:39:36 2022
+664+1 records in
+664+1 records out
+696745984 bytes transferred in 14.068746 secs (49524384 bytes/sec)
+guide</p>
+<ul>
+<li>Magnetic case clasps a nice touch</li>
+<li>Does take a minute to boot the first time - not very reassuring</li>
+<li>I/O ports further away from each other than on a MBP. Doesn&rsquo;t look great (lines), but makes it easy to fit dongles</li>
+</ul>
+<p>USB wouldn&rsquo;t boot? WTF.</p>
+<p>Doesn&rsquo;t say anything - but if you disable secure boot (boot while tapping F2), it just boots USB directly.</p>
+<p>Welcome to the OpenBSD/amd64 7.9 installation program.
+(I)nstall, (U)pgrade, (A)autoinstall, or (S)hell?</p>
+<p><a href="https://www.openbsd.org/faq/faq14.html#softraidFDE">https://www.openbsd.org/faq/faq14.html#softraidFDE</a></p>
+<p>Attempt #1: ramdance
+<a href="https://community.frame.work/t/instant-power-loss/13474/9">https://community.frame.work/t/instant-power-loss/13474/9</a></p>
+<p>Attempt #2: Reseat WiFi, NVME, DIMM&rsquo;s, remove a dimm.</p>
+<p>Only seems to happen while typing?
+only after a couple of minutes</p>
+<p>Firmware blobs - wtf?</p>
+<p>EDIMax worked great.</p>
+<p>echo &ldquo;permit persist :wheel&rdquo; &gt; /etc/doas.conf</p>
+<p>doas cp /etc/hostname.urtwn0 /etc/hostname.iwx0
+doas fw_update</p>
+<p>Fixing hostname</p>
+<p>doas vi wintermute.chainguard.dev
+doas hostname $(cat /etc/myname)</p>
+
+		</section>
+
+		<div class="post-tags">
+			
+			
+			
+		</div>
+	</article>
+</main>
+<footer>
+<hr><a class="soc" href="https://github.com/tstromberg" title="GitHub"><i data-feather="github"></i></a>|<a class="soc" href="https://twitter.com/thomrstrom" title="Twitter"><i data-feather="twitter"></i></a>|⚡️ Built with <a href="https://gohugo.io">Hugo</a>
+</footer>
+
+
+<script>
+      feather.replace()
+</script></div>
+    </body>
+</html>
