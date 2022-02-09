@@ -1,7 +1,7 @@
 baseURL = "https://stromberg.org/t/"
 languageCode = "en-us"
 title = "thomas strömberg"
-theme="archie"
+theme="husky"
 copyright = ""
 
 # Code Highlight
