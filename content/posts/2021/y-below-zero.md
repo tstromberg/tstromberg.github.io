@@ -1,5 +1,5 @@
 ---
-title: "Tesla Model Y: family camping in below-zero temperatures"
+title: "Tesla Model Y: below-zero family camping"
 date: 2021-03-08
 description: "TL;DR: If you think outside of the box, you can sleep 4 with full climate control for a cost of 10-12..."
 slug: y-below-zero

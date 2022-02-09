@@ -8,6 +8,12 @@
     --darkMaincolor: #FEEC00;
 }
 
+.meta {
+    font-size: 1rem;
+    margin-top: 0;
+    padding-top: 0;
+}
+
 @font-face {
     font-family: titleFont;
     src: url("../fonts/font.woff2");
@@ -19,6 +25,13 @@ p {
 
 h1.title {
     font-family: titleFont;
+    color: #414A5F;
+    font-size: 3.5rem;
+    margin-bottom: 0.5em;
+}
+
+h2 {
+    font-size: 1.5rem;
 }
 
 
@@ -38,4 +51,14 @@ body {
     background-color: #F5F5F5;
     padding: 1em;
     font-family: Lora, serif;
+    font-size: 1.3rem;
+}
+
+pre {
+    font-size: 0.8rem;
+}
+
+code {
+    font-size: 1.0rem;
+    background-color: #D7E2E3;
 }

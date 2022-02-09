@@ -2,66 +2,59 @@
 kind: post
 draft: false
 date: "2022-01-21T11:36:17.085124-08:00"
-title: Framework DIY laptop build with OpenBSD
-
-# words of the day
-#
-# uncarnate —  https://wordnik.com/word-of-the-day
-#    adjective: Not carnate or fleshly; not incarnate; not made flesh.
-#    adjective: To divest of flesh or fleshliness.
+title: OpenBSD on the Framework DIY laptop
 
 # contumacious —  https://www.dictionary.com/e/word-of-the-day/
 #    adjective: stubbornly perverse or rebellious; willfully and obstinately disobedient.
 ---
 
-While preparing for my first week at [Chainguard](https://chainguard.dev/), the CEO mentioned that I should order my own laptop. As a ~15 person startup, there isn't exactly an IT department to handle these sorts of things. 
+While preparing for my first week at [Chainguard](https://chainguard.dev/), the CEO mentioned that I should order my own laptop. As a ~15 person startup, there isn't an IT department to handle these sorts of things. 
 
-In 2022, the default  laptop of choice for a software engineer working on cloud infrastructure is the [Apple M1 Powerbook](https://apple.com/powerbook). They hit nearly all the checkboxes: a great screen, powerful CPU's, and battery life that is the envy of any laptop in their class.  The arm64 based Mac's are fantastic: in fact, I'm typing this from my personal M1 MacBook Air. 
+In 2022, the default laptop of choice for a software engineer working on cloud infrastructure is the [Apple M1 Powerbook](https://apple.com/powerbook). They hit nearly all the checkboxes: a great screen, powerful CPUs, and battery life that is the envy of any laptop in their class. The arm64 based Macs are fantastic: in fact, I'm typing this from my personal M1 MacBook Air. 
 
 A few thoughts dissuaded me from selecting yet another MacBook for this job:
 
-* Working at a company that embraces a secure-by-default stance should use an operating-system that matches philosophically
-* As a software engineer, using a different environment than my coworkers ensures that I will be forced to learn the underlying internals of how the system works
-* As an open-source contributor, using a different operating-system than other contributors helps with open-source inclusiveness, diversity, and promotes cleaner architecture.
+* Working at a company that embraces a secure-by-default stance should use an operating system that matches philosophically
+* As a software engineer, using a different environment than my coworkers ensures that I will be forced to learn   the underlying internals of how the system works
+* As an open-source contributor, using a different operating system than other contributors helps with open-source inclusiveness, diversity, and promotes cleaner architecture.
 
-The clear hardware alternative for open-source developers in 2022? The Framework Laptop. Not only does Framework fully embrace the open-source ethos, but the hardware is designed to be upgradeable. As a believer in waste-free sustainability as well as someone stuck with a MacBook Air with 16GB of RAM, this last aspect in particular is important (I'll make use of this trait later in the article)
+The clear hardware alternative for open-source developers in 2022? The Framework Laptop. It ships with an open-source firmware, is available without a closed-source operating system, and is designed to be user upgradeable. 
 
-OpenBSD is a little bit of a less-clear alternative, particularly on a laptop. If you work at all in computer security, you owe it to yourself to try running OpenBSD as a laptop: if only to learn about the impact of a secure-by-default stance has on user behavior. I can only recommend OpenBSD on a laptop to folks who are truly comfortable at a command-line, or those that wish to be.
+OpenBSD has always been a contumacious alternative, particularly on a laptop. That said, if you work in computer security, you owe it to yourself to try OpenBSD some time: if only to learn about the impact of a secure-by-default stance has on user behavior. While I expected OpenBSD to be painful on a laptop, I was comforted when I found this another blogger, Joshua Stein, who had [detailed their experience](https://jcs.org/2021/08/06/framework) (with much better photos)
 
-## Assembling the laptop
+## Assembly
 
-The Framework laptops come in two varieties: a standard pre-assembled laptop with Windows, and a DIY laptop with nothing on it. Since I wasn't planning on running Windows, I opted for the DIY version to save some money. 
+The Framework laptops come in two varieties: a pre-assembled laptop with Windows, and a DIY laptop without an OS. Since I wasn't planning on running Windows, I opted for the DIY version to save money. I won't repeat what is already in the excellent [Framework Laptop DIY Edition Quick Start Guide](https://guides.frame.work/Guide/Framework+Laptop+DIY+Edition+Quick+Start+Guide/57), but I'll share some notes.
 
-I won't repeat what is already in the excellent [Framework Laptop DIY Edition Quick Start Guide](https://guides.frame.work/Guide/Framework+Laptop+DIY+Edition+Quick+Start+Guide/57), but I'll share some of the high points and problems I ran into.
+Difficulty levels:
 
-The only parts you need to assemble for the DIY laptop are:
+* Memory: easy to add
+* Storage: easy to add
+* Wireless: easy to screw up once
+* I/O ports: Trivial (I opted for 3 USB-C ports and 1 USB-A port)
 
-* Memory: easy enough
-* Storage: also easy
-* Wireless: a little trickier, but not difficult
-* I/O ports: I opted for 3 USB-C ports and 1 USB-A port, they snapped into place trivially.
-
-The things that stood out to me about the Framework hardware was:
+Standout features:
 
 * The case screws are all designed to be half-removed and stay in place. As someone who always loses screws, I really appreciated this.
 * The magnetic case clasps are also a surprisingly nice reassuring touch
 * If you make any changes to the RAM configuration, you will be staring at a black screen for the first 1-2 minutes of the next boot. It isn't reassuring at all.
-* The I/O ports are much further away from each other than on a MBP. The lines don't look great from an aesthetic perspective, but the distance makes it much easier to plug larger devices in, such as USB-C SD readers.
-* The webcam is great if you have lots of light, but didn't look at good at low-light as the equivalent MacbBook camera. It was enough for me to change rooms and hook up a Logitech USB camera (which I eventually decided was unnecessary)
+* The I/O ports are much further away from each other than on an MBP. The lines don't look great from an aesthetic perspective, but the distance makes it much easier to plug larger devices in, such as USB-C SD readers.
+* The webcam functions excellently (except in low-light).
 
-Due to OpenBSD compatibility issues, I used an older Intel Wireless card that was known to work well. 
+Due to the compatibility issues documented at [OpenBSD on the Framework Laptop](https://jcs.org/2021/08/06/framework), I bought the older Intel AX201NGW wireless card for a mere $13 on eBay.
 
-## OpenBSD: Flashing a USB drive from macOS
+## Flashing an OpenBSD USB stick from macOS
 
 I find I learn more about software by installing it from HEAD, or at least a recent snapshot of it. OpenBSD offers [nightly snapshot images](https://cdn.openbsd.org/pub/OpenBSD/snapshots/amd64/), so I opted to download OpenBSD from there. I don't typically do so, but due to my interest in the software signing space, I decided to follow the instructions to confirm that the install image matches the expected SHA256 signature:
 
 ```shell
-curl -O https://cdn.openbsd.org/pub/OpenBSD/snapshots/amd64/SHA256                   shasum -c SHA256 --ignore-missing
+curl -O https://cdn.openbsd.org/pub/OpenBSD/snapshots/amd64/SHA256 
+shasum -c SHA256 --ignore-missing
 ```
 
 I had no idea that the `shasum` command could pull hashes out of a text file like that. This is a great way to avoid corrupt downloads, but doesn't help at all for avoiding supply-chain attacks, as the checksums and the image share the same mutable distribution mechanism.
 
-Writing the install image to disk on macOS is nearly identical to that of any other UNIX platform. Find the device name for the USB stick:
+Writing the install image to disk on macOS is the same as with other operating systems. Find the device name for the USB stick:
 
 ```shell
 sudo diskutil list                                                                 
@@ -89,6 +82,7 @@ Unmount the disk, and flash it with OpenBSD:
 ```shell
 sudo diskutil unmountDisk /dev/disk4 
 sudo dd if=install70.img of=/dev/disk4 bs=1m                                         ```
+```
 
 ## First Boot
 
@@ -103,15 +97,13 @@ Welcome to the OpenBSD/amd64 7.9 installation program.
 
 Since this is a corporate laptop, I certainly wanted to use Full Disk Encryption. I followed the [OpenBSD Full Disk Encryption](https://www.openbsd.org/faq/faq14.html#softraidFDE), which meant selecting the `(S)hell` option.
 
-While setting up the disks, the laptop suddenly lost power. What The Fudge?
-
-The only thing I wasn't fully confident about was the DIMM insertion, so I attempted a RAM dance (something I learned from working in a Google Datacenter over a decade ago), but it happened again.
+While setting up the disks, the laptop suddenly lost power. What The Fudge? I was pretty sure it was related to my hardware, as I wasn't fully confident about was the DIMM insertion, so I attempted a RAM dance (something I learned from working in a Google Datacenter over a decade ago), but it happened again.
 
 I then tried reseating all the components, and it happened again. I found a [scary sounding forum thread](https://community.frame.work/t/instant-power-loss/13474/9), but it wasn't a complete match for what I was seeing. The power loss only seemed to happen while I was typing, and only after a couple of minutes. 
 
-In my 3rd install attempt, everything worked mysteriously. It was only later that I realized I was battling a race condition which seemingly only OpenBSD users suffer from.
+In my 3rd install attempt, everything worked mysteriously. It was only later that I realized I was battling the same touchpad power event [https://jcs.org/2021/08/06/framework](detailed here). After the installation, I never encountered it again.
 
-One unexpected surprise after installation was that even my Intel Wireless card didn't work due to missing firmware blobs. I used an older EDIMax USB wireless card, and not only did it work great, but it magically allowed the Intel wireless card to work properly as OpenBSD downloads the necessary drivers during boot time via `fw_update`: if it has a working internet connection to begin with.
+One  post-installation surprise was that the Intel Wireless card didn't work - due to a missing firmware blob. I used an older EDIMax USB wireless card, and not only did it work great, but it magically allowed the Intel wireless card to work properly as OpenBSD downloads the necessary drivers during boot time via `fw_update`: if it has a working internet connection to begin with.
 
 ## Post-Installation
 
@@ -169,32 +161,50 @@ doas rcctl set sndiod flags -f rsnd/0 -F rsnd/1
 doas rcctl reload sndiod
 ```
 
-I couldn't get screen sharing to work in Google Meet in either Chrome or Firefox, but eventually made it function in Firefox by using:
+I couldn't get screen sharing to work in Google Meet in either Chrome or Firefox, but eventually made it function in Firefox by disabling the [pledge](https://man.openbsd.org/pledge.2) sandbox, as per the [mozilla-firefox port docs](https://openports.pl/path/www/mozilla-firefox):
 
 ```
+echo disable | doas tee /etc/firefox/pledge.gpu
+echo disable | doas tee /etc/firefox/pledge.content
+echo disable | doas tee /etc/firefox/pledge.main
+echo disable | doas tee /etc/firefox/pledge.rdd
 ```
 
-To keep Firefox from suddenly crashing, I needed to up the maximum memory limits for the wheel class in `/etc/login.conf`:
+To keep Firefox and other behemoths from suddenly crashing, I joined the `staff` group and increased the per-process memory limits in `/etc/login.conf`:
 
 ```
+staff:\
+	:datasize-cur=16G:\
+	:datasize-max=infinity:\
+	:maxproc-max=512:\
+	:maxproc-cur=256:\
+        :openfiles-cur=4096:\
+        :openfiles-max=8192:\
+	:stacksize-cur=32M:\
+	:ignorenologin:\
+	:requirehome@:\
+	:tc=default:
 ```
 
-To play music, I installed [ncspot](https://github.com/hrkfdn/ncspot), a terminal Spotify player. It seems that the Spotify web client doesn't work without DRM plugins that are not shipped in Chromium or Firefox. One quirk I needed to fix was corrupt output when launched from XFCE, which was addressed by adding `env TERM=xterm-256color LANG=en_US.UTF-8` to the ncspot launcher properties.
+To play music, I installed [ncspot](https://github.com/hrkfdn/ncspot), a terminal Spotify player. It seems that the Spotify web client doesn't work without DRM plugins that are not shipped in Chromium or Firefox. One quirk I encountered was corrupt output when launched from XFCE, which can be fixed by adding `env TERM=xterm-256color LANG=en_US.UTF-8` to the launcher properties.
 
-I found in the end that most of the heartache in OpenBSD is related to one of two things: 
+## Annoyances
 
-* Using software that isn't popular with other OpenBSD users: NodeJS, for instance.
-* The extremely paranoid security defaults
+The current annoyances with my configuration are:
 
-## Current annoyances
+* Fan control: The laptop fan fans seem overactive in OpenBSD, especially given the normal temperature I've seen. This is noticeable when watching a video stream.
 
-* Fan control: The Framework laptop fans seem overactive in OpenBSD, especially given the CPU temperatures. Noticeable if you are in a videoconference call or building software.
-
-* Chromium / Google Meet: I never did get screen sharing to work, receiving only the following error: "Can't share your screen: Sorry, an error has occurred when screensharing". I was able to get it to function in Firefox by disabling pledge.
+* Chromium / Google Meet: I never did get screen sharing to work, receiving only the following error: "Can't share your screen: Sorry, an error has occurred when screensharing." I was able to get it to function in Firefox by disabling pledge.
 
 * Zoom: With Firefox, Zoom reports `Zoom is not supported on your operating system`, but can be accessed using a User-Agent switcher extension. With Chromium, it works, but reports `Your browser doesn't support using computer's Audio device`. 
 
-* Editors: While NeoVim is good, 
+* Editors: While NeoVim is good, I miss VSCode. Perhaps [code-server](https://github.com/coder/code-server) will work with some elbow grease.
 
-* 
+* Cloud Native: Many common cloud-native tools only exist in a Linux-based universe. Don't expect Docker, Kubernetes, Podman, LIMA, kind, minikube, or ilk to function in OpenBSD. You can still build & push containers using [ko](https://github.com/google/ko) and sign containers using [cosign](github.com/sigstore/cosign/).
 
+## In Closing
+
+I found that most of the heartache in OpenBSD is related to one of two things: 
+
+* Using software that isn't popular with other OpenBSD users: NodeJS, for instance.
+* Paranoid security defaults that can be overcome

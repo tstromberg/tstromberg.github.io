@@ -2,7 +2,7 @@
 kind: post
 draft: false
 date: "2022-01-10T00:00:00Z"
-title: 'My first 15k: San Francisco Hot Chocolate Run'
+title: 'My first 15k'
 ---
 Yesterday, I ran further than I have ever run before: 15k (9.6mi). Today, my legs feel sore and stiff, as if I am walking around on knees made up of chipped pallasite. 
 
