@@ -12,7 +12,7 @@ and I asked her if there was any interesting UNIX-internals sort of bugs that mi
 
 Here's the [mystery issue](https://github.com/GoogleContainerTools/kaniko/issues/1097): "The USER command does not set the correct gids, so extra groups are dropped". Here's an example to reproduce it:
 
-```
+```docker
 FROM ubuntu:latest
 RUN groupadd -g 20000 bar
 RUN groupadd -g 10000 foo
@@ -29,11 +29,15 @@ like a secondary group issue. I happened to know that secondary groups were bolt
 
 First, get a shell into the Kaniko debug image, mounting in the out/ and integration/ subdirectory:
 
-`docker run -it --entrypoint /busybox/sh -v "$HOME"/.config/gcloud:/root/.config/gcloud -v (pwd)/integration:/workspace -v (pwd)/out:/out gcr.io/kaniko-project/executor:debug`
+```shell
+docker run -it --entrypoint /busybox/sh -v "$HOME"/.config/gcloud:/root/.config/gcloud -v (pwd)/integration:/workspace -v (pwd)/out:/out gcr.io/kaniko-project/executor:debug
+```
 
 I placed their Dockerfile into `kaniko/integration/1097`, which was mounted as `/workspace`. I could then trivially reproduce their case using kaniko:
 
-`/kaniko/executor -f 1097 --context=dir://workspace --destination=gcr.io/kaniko/test --tarPath=/tmp/image.tar --no-push`
+```shell
+/kaniko/executor -f 1097 --context=dir://workspace --destination=gcr.io/kaniko/test --tarPath=/tmp/image.tar --no-push
+```
 
 ## Finding the culprit
 
@@ -77,11 +81,15 @@ func impersonate(userStr string) (*syscall.Credential, error) {
 
 After running `make`, I hop back into the container to run the repro case, and I'm perplexed by the log message:
 
-`INFO[0013] u.GroupIds returned: []`
+```
+INFO[0013] u.GroupIds returned: []
+```
 
 Is kaniko running in some alternate chroot universe where it can't see? I double check by adding a shell command:
 
-`out, err = exec.Command("grep", "foo", "/etc/group").Output()`
+```go
+out, err = exec.Command("grep", "foo", "/etc/group").Output()
+```
 
 The answer is no. At this point, there are only two options in my mind. Either this is a Go bug, or, if Go is using libc to make this call (likely),
 it's a libc bug, or at least a disagreement between the two systems. As soon as you have made the decision to blame the compiler, it's time to gather evidence, typically by making a simpler test case. I opt first to investigate if Go is using libc to look up the list of secondary groups, starting with:
@@ -119,16 +127,18 @@ func main() {
     }
 ```
 
-The test program runs great on macOS, but when I use [xgo](https://github.com/karalabe/xgo) to cross-compile it for Linux, all it outputs is:
+The test program runs great on macOS, but when I use [xgo](https://github.com/karalabe/xgo) to cross-compile Kaniko for Linux, all it outputs is:
 
-```
+```shell
 -rwxr-xr-x    1 0        0          2125099 Mar 28 20:26 ggroups-linux-amd64
 
 # ./ggroups-linux-amd64
 /busybox/sh: ./ggroups-linux-amd64: not found
 ```
 
-If you ever see this error in UNIX, it usually means one of three things:
+## Not found? Huh?
+
+If you ever see an `./program: not found` error in UNIX, it typically means one of three things:
 
 * The program specifies an invalid `#!` line
 * The binary needs a shared library that does not exist
@@ -137,7 +147,7 @@ If you ever see this error in UNIX, it usually means one of three things:
 In this case, I suspected #2, because I see that busybox is in use, chances are pretty high that this Docker image lacks libc. This environment
 does not have `ldd`, but it has `strings`, so I can get some hints about the binary that was built:
 
-```
+```shell
 strings /out/ggroups-linux-amd64  | head
 bhkFaBAPgWy3KAp2RQcd/llKGprZSMM7cCxIzwmJ9/0QgnPM9q9pk--9IIyIXn/X9bTurj9MBmKtnVL-ANT
 /lib64/ld-linux-x86-64.so.2
@@ -154,7 +164,7 @@ out/executor: $(GO_FILES)
 
 God damnit. kaniko works because they disable `cgo` to workaround the lack of a libc environment. Look back at [listgroups_unix.go](https://golang.org/src/os/user/listgroups_unix.go) - it uses C code, and the build rule specifically states only to build with cgo. If we look at the fallback implementation, we see:
 
-```
+```go
 func listGroups(*User) ([]string, error) {
     if runtime.GOOS == "android" || runtime.GOOS == "aix" {
         return nil, fmt.Errorf("user: GroupIds not implemented on %s", runtime.GOOS)
@@ -165,7 +175,7 @@ func listGroups(*User) ([]string, error) {
 
 But wait - we didn't see an error in our impersonate function! I try to compile it without cgo:
 
-```
+```shell
 env CGO_ENABLED=0 go run ggroups.go root
 panic: groupids failed: user: GroupIds requires cgo
 
@@ -183,11 +193,11 @@ If you see an error in one environment, and not the other, chances are either:
 * A kernel error
 * You forgot to check the error code.
 
-It's almost always the last option. Sure enough:
+It's almost always the last option. Sure enough, I returned err but never checked it:
 
 ```go
    gidStr, err := u.GroupIds()
    logrus.Infof("groupstr: %s", gidStr)
 ```
 
-As soon as I noticed this, I walked away from my computer for an hour. I suggest you do the same.
+As soon as I noticed this, I walked away from my computer for an hour. If I had configured my editor to show errors from [golangci-lint](https://github.com/golangci/golangci-lint), I would have caught this immediately and saved myself 20 minutes.

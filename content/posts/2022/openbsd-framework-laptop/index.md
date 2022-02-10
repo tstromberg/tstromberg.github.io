@@ -20,7 +20,9 @@ In 2022, the default laptop of choice for a software engineer working on cloud i
 
 The clear hardware choice for rebellious open-source developers in 2022? The Framework Laptop. It ships with open-source firmware, is available without a closed-source operating system, and is designed to be user upgradeable. 
 
-OpenBSD has always been a contumacious alternative, particularly on a laptop. That said, if you work in computer security, you owe it to yourself to try OpenBSD some time: if only to learn about the impact of a secure-by-default stance has on user behavior. While I expected OpenBSD to be painful on a laptop, I was comforted when I found this another blogger, Joshua Stein, who had [detailed their experience](https://jcs.org/2021/08/06/framework) (with much better photos)
+OpenBSD has always been a contumacious alternative, particularly on a laptop. That said, if you work in computer security, you owe it to yourself to try OpenBSD some time: if only to learn the effect a secure-by-default philosophy has on user behavior. 
+
+While I expected OpenBSD to be painful on a laptop, I was comforted when I found this another blogger, Joshua Stein, who had [detailed their experience](https://jcs.org/2021/08/06/framework) (with better photos!)
 
 ## Assembly
 
@@ -224,3 +226,5 @@ I found that most of the heartache in OpenBSD is related to one of two things:
 
 * Using software that isn't popular with other OpenBSD users: NodeJS, for instance.
 * Paranoid security defaults that can be overcome
+
+I plan to continue using it as long as it seems viable.

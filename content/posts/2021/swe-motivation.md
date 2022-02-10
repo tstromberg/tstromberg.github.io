@@ -15,7 +15,7 @@ Everyone wants to be happy, but everyone has their unique path to happiness. Lea
 
 Asking people directly, "What motivates you as a software engineer?" will often unlock the right set of hints for how to frame messages in a way that works for them. However, to get an honest and complete answer, one needs to build rapport.
 
-**Building rapport**
+## Building rapport
 
 Building rapport with the team is critical to establishing the psychological safety required for folks to feel comfortable sharing their real thoughts. My advice is to model and build a real personal connection that supersedes the synthetic relationship of the manager to the direct report.
 
@@ -25,7 +25,7 @@ A technique I have used successfully is to declare to each person my focus: it's
 
 It is important to recognize that the average tenure at a tech company is three years, so your manager/report relationship will last on average only a year and a half, or about 5% of their career. As a manager trying to build a high-functioning team, you should focus on making the most of this overlap to set them up for the other 95% of their career. Letting your direct report know that you are on their side and in it for the long-haul will build the rapport necessary for candor.
 
-**Life stories make honest goals approachable**
+## Life stories make goals real & approachable
 
 To build mutual respect, candor, and empathy, I like to take time in an early 1:1 to model it through sharing my life story, career journey, goals, and missteps. Next, it's your turn to listen intently to your report's own life story, noting that they may not be ready to share all of it. What you hear though, may surprise and shock you. Life isn't always sunshine and roses.
 

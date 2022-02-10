@@ -14,6 +14,16 @@
             {{ .Content }}
         </section>
 
+        <section class="comment">
+            Have something to add? <a href="javascript:dece('dEBzdHJvbWJlcmcub3Jn');">email me!</a></div>
+            <script language="javascript">
+              function dece(encoded) {
+                var address = atob(encoded);
+                window.location.href = "mailto:" + address;
+              }
+            </script>    
+        </section>
+
         <div class="post-tags">
             {{ if ne .Type "page" }} {{ if gt .Params.tags 0 }}
             <nav class="nav tags">
