@@ -2,8 +2,10 @@
 <hr>
 {{- range $index, $key := .Site.Params.Social -}}
 <a class="soc" href="{{ $key.url }}" title="{{ $key.name }}"><i data-feather="{{ $key.icon }}"></i></a>|
-{{- end -}} 
- ⚡️ Built with <a href="https://gohugo.io">Hugo</a>
+{{- end -}}
+<a class="soc" href="javascript:dece('dEBzdHJvbWJlcmcub3Jn');" title="E-mail"><i data-feather="inbox"></i></a>|
+
+⚡️ Built with <a href="https://gohugo.io">Hugo</a>
 </footer>
 {{ if not .Site.IsServer }}
 {{ template "_internal/google_analytics_async.html" . }}
@@ -14,3 +16,10 @@
       feather.replace()
 </script>
 {{- end -}}
+
+<script language="javascript">
+      function dece(encoded) {
+        var address = atob(encoded);
+        window.location.href = "mailto:" + address;
+      }
+</script>  

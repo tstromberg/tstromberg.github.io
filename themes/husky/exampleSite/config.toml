@@ -22,9 +22,10 @@ icon = "twitter"
 url = "https://github.com/athulcajay/"
 
 [[params.social]]
-name = "GitLab"
-icon = "gitlab"
-url = "https://gitlab.com/athul/"
+name = "E-mail"
+icon = "email"
+url = "javascript:dece('dEBzdHJvbWJlcmcub3Jn');"
+
 [[menu.main]]
 name = "Home"
 url = "/"
