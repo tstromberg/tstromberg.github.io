@@ -43,5 +43,12 @@ url = "/about"
 weight = 3
 
 [[menu.main]]
+name = "blog-roll"
+url = "/blogroll"
+weight = 4
+
+
+
+[[menu.main]]
 name = "tags"
 url = "/tags"
