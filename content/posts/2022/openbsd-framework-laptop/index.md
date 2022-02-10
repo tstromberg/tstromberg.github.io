@@ -117,7 +117,7 @@ While setting up the disks, the laptop suddenly lost power. What The Fudge? I wa
 
 I then tried reseating all the components, and it happened again. I found a [scary sounding forum thread](https://community.frame.work/t/instant-power-loss/13474/9), but it wasn't a complete match for what I was seeing. The power loss only seemed to happen while I was typing, and only after a couple of minutes. 
 
-In my 3rd install attempt, everything worked mysteriously. It was only later that I realized I was battling the same touchpad power event [https://jcs.org/2021/08/06/framework](detailed here). After the installation, I never encountered it again.
+In my 3rd install attempt, everything worked mysteriously. It was only later that I realized I was battling the same touchpad power event [detailed by Joshua Stein](https://jcs.org/2021/08/06/framework). After the installation, I never encountered it again.
 
 One post-installation surprise was that the Intel Wireless card didn't work - due to a missing firmware blob. I used an older EDIMax USB wireless card, and not only did it work great, but it magically allowed the Intel wireless card to work properly as OpenBSD downloads the necessary drivers during boot time via `fw_update`: if it has a working internet connection to begin with.
 
