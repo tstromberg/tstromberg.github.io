@@ -4,6 +4,8 @@ date: 2021-03-08
 description: "TL;DR: If you think outside of the box, you can sleep 4 with full climate control for a cost of 10-12..."
 slug: y-below-zero
 main_image: https://dev-to-uploads.s3.amazonaws.com/uploads/articles/hu007u2xvrwlymygmt8a.jpg
+tags:
+    - travel
 ---
 TL;DR: If you think outside of the box, you can sleep 4 with full climate control for a cost of 10-12% battery usage per night, even in freezing temperatures.
 

@@ -3,6 +3,8 @@ kind: post
 draft: false
 date: "2022-01-21T11:36:17.085124-08:00"
 title: OpenBSD on the Framework laptop
+tags:
+   - tech
 
 # contumacious —  https://www.dictionary.com/e/word-of-the-day/
 #    adjective: stubbornly perverse or rebellious; willfully and obstinately disobedient.

@@ -4,7 +4,7 @@ draft: false
 date: "2022-01-20T00:00:00Z"
 title: Hand-carving a bicycle
 tags:
-  - cycling
+  - bicycles
 ---
 
 After dumping 60 hours into hand-carving a custom bicycle frame, I can say with high probability that you probably shouldn't do so. Before I convince you of this, let me describe how I went about it.

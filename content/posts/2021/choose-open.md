@@ -4,6 +4,8 @@ date: 2021-03-10
 description: "Why adopt open-source tools?   On a long enough timescale, open-source always wins.  Even wi..."
 slug: choose-open
 draft: true
+tags:
+ - tech
 ---
 ## Why adopt open-source tools?
 

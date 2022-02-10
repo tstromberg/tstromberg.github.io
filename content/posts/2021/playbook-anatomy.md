@@ -4,6 +4,8 @@ date: 2021-05-21
 description: "What if you could easily reduce the length of outages by 3X?  According to the SRE book, \"recording t..."
 slug: playbook-anatomy
 main_image: https://dev-to-uploads.s3.amazonaws.com/uploads/articles/k7idltgd9vjp5kz3e4y3.jpg
+tags:
+ - tech
 ---
 What if you could easily reduce the length of outages by 3X?
 

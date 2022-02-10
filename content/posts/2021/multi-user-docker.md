@@ -4,6 +4,9 @@ date: 2021-02-01
 description: "First, be aware that docker is not designed to be securely shared among multiple users. Please assume..."
 slug: shared-docker-mac
 main_image: https://dev-to-uploads.s3.amazonaws.com/i/movf3eo57f8rvpeqgjty.jpg
+tags:
+ - tech
+
 ---
 
 Need to make Docker on macOS available to any user who connects in remotely? It can be done!

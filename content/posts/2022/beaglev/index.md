@@ -2,6 +2,8 @@
 title: "Post"
 date: 2022-02-07T07:46:40-08:00
 draft: true
+tags:
+    - tech
 ---
 
 RVBoards has a handy [Getting Started with BeagleV™ - StarLight](https://www.rvboards.org/single-blog-1.php?id=93) guide that I followed to get the board up and running.

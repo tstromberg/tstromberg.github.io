@@ -3,6 +3,8 @@ title: "Go & secondary groups: a kaniko adventure!"
 date: 2021-02-26
 description: "Originally posted on my personal blog in April 2020  I wanted to get my feet wet with understanding K..."
 slug: kaniko-groups
+tags:
+ - tech
 ---
 <em>Originally posted on my personal blog in April 2020</em>
 
