@@ -1,0 +1,124 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DIY Electric Jerry Can | choosehappy.dev</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="alternate" type="application/atom+xml" title="choosehappy.dev RSS Feed" href="/feed.xml">
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-left">
+        <div class="site-title">☀️ <a href="/">choosehappy.dev</a></div>
+        <div class="site-desc">thomas strömberg's happy little corner of the internet.</div>
+      </div>
+      <ul class="nav-right">
+        <li><a href="/posts">posts</a></li>
+        <li><a href="https://www.linkedin.com/in/thomas-str%C3%B6mberg-9977261/">linkedin</a></li>
+        <li><a href="https://triangletoot.party/@thomrstrom">mastodon</a></li>
+        <li><a href="/feed.xml" title="RSS Feed">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3.429 14.25c1.04 0 1.92.35 2.64 1.05.72.7 1.08 1.58 1.08 2.64 0 1.04-.36 1.92-1.08 2.64-.72.72-1.6 1.08-2.64 1.08-1.06 0-1.94-.36-2.64-1.08-.7-.72-1.05-1.6-1.05-2.64 0-1.06.35-1.94 1.05-2.64.7-.7 1.58-1.05 2.64-1.05zm0-4.5c2.32 0 4.42.87 6.3 2.61 1.88 1.74 2.82 3.9 2.82 6.48h-3.15c0-1.64-.6-3.05-1.8-4.23-1.2-1.18-2.62-1.77-4.26-1.77V9.75zm0-4.5c3.71 0 6.9 1.35 9.57 4.05 2.67 2.7 4.01 5.94 4.01 9.72h-3.15c0-2.88-1.05-5.37-3.15-7.47-2.1-2.1-4.59-3.15-7.47-3.15V5.25z"/>
+          </svg>
+        </a></li>
+      </ul>
+    </nav>
+  </header>
+
+  
+<article>
+  <h1>DIY Electric Jerry Can</h1>
+  <div class="post-meta">
+    <p>Published on May 11, 2023</p>
+  </div>
+  <p>In the 1930s, Vinzenz Grünvogel designed the <em>Wehrmacht-Einheitskanister</em>: an ingenious container that was stackable, carried liquid without spilling and was easy to carry. The design was so popular that nations around the world copied it, and in the United States, it became known as a “Jerry Can” (Jerry being slang for “German”).</p>
+<p>This project shares none of those attributes.</p>
+<p><img src="https://i.snap.as/rvh9B0ox.jpg" alt=""></p>
+<!--more-->
+<h3>The Range Anxiety Problem</h3>
+<p>Before I bought the<a href="https://www.bmwmotorcycles.com/en/models/urban_mobility/ce04.html"> BMW CE-04</a> — an insanely fun electric scooter, I knew there would be range issues. With a relatively small 8.2kWh battery, the range varies highly depending on the speed of the road you are traveling on:</p>
+<ul>
+<li>35mph (55km/h) → 75 miles (120 km) of range</li>
+<li>55mph (90km/h) → 60 miles (95 km) of range</li>
+<li>75mph (120km/h) → 40 miles (65 km) of range</li>
+</ul>
+<p><img src="https://i.snap.as/CTLEu5Y1.jpg" alt=""></p>
+<p>Unlike larger EVs, this scooter does not give you a range estimate for a destination or direct you to EV chargers when running low. If you are going to use a short-range EV for long-distance trips, you will need to plan ahead using tools like<a href="https://abetterrouteplanner.com/"> ABetterRoutePlanner</a> and PlugShare.</p>
+<p>Even with proper planning, you can find yourself in a situation where you consume more charge than you’ve planned: for example, by speeding or taking a wrong turn onto a 70 mph highway.</p>
+<h3>The rough plan</h3>
+<p>Long-distance “Adventure” motorcyclists often pack a<a href="https://twistedthrottle.com/shop/luggage/fuel-bottles-and-mounts/msr-30oz-fuel-bottle/"> small fuel canister for emergencies</a>. Jeep drivers often bring full-sized Jerry Cans. Why not do the same for EVs?</p>
+<p>It’s easy enough to find large power banks: Jackery, Anker, EcoFlow, and Goal-Zero will all happily sell you one. The challenge was finding a power bank that stored enough charge to be helpful (800 - 1200 kWh) and could fit in the helmet compartment of the CE-04. After taking measurements, I was confident that the<a href="https://www.jackery.com/products/explorer-1000-portable-power-station"> Jackery 1000</a> might just work, so I waited for it to go on sale.</p>
+<h3>Early experiments were full of fail</h3>
+<p><img src="https://i.snap.as/2lkNRGdu.jpg" alt=""></p>
+<p>My first experiments went poorly: both the BMW (Delphi) EV charger and the Tesla Mobile Connector refused to charge from the Jackery 1000 due to the lack of proper ground. I soon learned that the<a href="https://en.wikipedia.org/wiki/SAE_J1772"> SAE J1772</a> EV charger specifications required ground monitoring for safety reasons.</p>
+<p>The Jackery 1000 and most other power banks don’t offer a user-accessible ground: the 3rd pin on their sockets is just an empty slot so that a standard 3-prong power cable fits.</p>
+<h3>Overcoming the J1772 Grounding Requirement</h3>
+<p>I tried a number of workarounds, but none of them fooled the EVSE (a fancy acronym for an EV charger cable):</p>
+<ul>
+<li>3-pin to 2-pin converters</li>
+<li>Portable GFCI outlets</li>
+<li>Neutral-Ground Bonding Plugs</li>
+</ul>
+<p>I found a Youtube video demonstrating one method to circumvent ground detection, but it seemed overly hacky, bulky, and potentially dangerous. I also contacted the<a href="https://evdoctor4earth1.weebly.com/"> EVDOCTOR</a> for advice, who recommended that if I opened the Jackery, I’d likely find a metal ground internal.</p>
+<p>I had read about some of the cheaper EVSE cables not implementing ground, and the EVDOCTOR hinted that the easiest path forward would be ordering the cheapest EVSE I could and returning it if it implemented ground.</p>
+<p>There is no comprehensive list of EVSE cables that can be used without a ground, but I did find hints suggesting that these may work:</p>
+<ul>
+<li><a href="https://www.mynissanleaf.com/viewtopic.php?t=31649">Southking SK-EV16</a></li>
+<li>Toyota Prius PHEV cable</li>
+<li>Honda Clarity PHEV cable</li>
+</ul>
+<p><img src="https://i.snap.as/Mcm4YXHJ.jpg" alt=""></p>
+<p>I looked at the cheapest EVSE cables on Amazon and found one that seemed perfect: a 13ft “travel” cord that supported 220V/110V and allowed ground monitoring to be toggled:<a href="https://www.amazon.com/dp/B0BBPNGPML?psc=1&amp;ref=ppx_yo2ov_dt_b_product_details"> Sankaba Level 2 EV Charger,16Amp EV Charger Station,NEMA 5-20 Plug EV Charger Level 2,100-240v Portable EV Charger</a></p>
+<p>Notably, the ad mentions that there is a “Ground Setting” available:</p>
+<blockquote>
+<p>After entering the menu, there are two options.</p>
+</blockquote>
+<blockquote>
+<p>The device can detect whether the input power supply of the product connected ground wire. If the user's power input is not equipped with ground wire, the device cannot work normally. You should select the second option to connect it.</p>
+</blockquote>
+<blockquote>
+<p>For security, it will be ensured that the power input is protected by a ground wire.</p>
+</blockquote>
+<p>I bought the Sankaba, and it works just fine with the Jackery 1000 out of the box. The OEM appears to be &quot;Ningbo Yiwei New Energy Technology Co., LTD&quot; with a model number of EV-SAE-AC16-P. This EVSE is also sold under the name of Sunsky.</p>
+<h3>Modding the Jackery case</h3>
+<p>I expected the Jackery 1000 would be barely too tall to fit in the helmet compartment on the CE-04, but I was confident I could remove the top handle if it became a problem. When I received the unit, I learned I was right:</p>
+<p><img src="https://i.snap.as/zvB63J21.jpg" alt=""></p>
+<p>I found a<a href="https://www.youtube.com/watch?v=AKxt4eAwKRU&amp;t=238s"> teardown video</a> for the Jackery and was happy to see that the handle was empty plastic, so I took a hacksaw to it:</p>
+<p><img src="https://i.snap.as/MHp8Ob11.jpg" alt=""></p>
+<p>With that, the Jackery fits just barely in the helmet compartment. I sanded down the leftover corners of the handle to improve clearance and even added a carrying strap.</p>
+<p><img src="https://i.snap.as/yhAfzJdd.jpg" alt=""></p>
+<h3>The finished product</h3>
+<p><img src="https://i.snap.as/ngBwOroN.jpg" alt=""></p>
+<p>Once assembled, using the Jackery Electric JerryCan is easy:</p>
+<ul>
+<li>On the BMW CE-04, set the maximum amperage to 10A</li>
+<li>Place the charging brick in the shade to prevent overheating</li>
+<li>Hit the “AC” button on the Jackery 1000</li>
+<li>Plug the charging cable in on both ends</li>
+</ul>
+<p>It takes about 45 minutes to fully discharge the Jackery’s battery fully over 110V, adding 750Wh - or about 9.3% charge to the BMW CE-04. Due to the inefficiency of DC-&gt;AC-&gt;DC conversion, you will not get the full 1002Wh. The charge is good enough for emergency use, as it’s enough for this scooter to make it 6 miles (10 km) further to a real charger.</p>
+<p>As the auxiliary battery takes up nearly the entire helmet compartment, I store the EVSE cable in my top case with other emergency tools:</p>
+<p><img src="https://i.snap.as/mCH3LZOR.jpg" alt=""></p>
+<h3>Bill of Materials</h3>
+<ul>
+<li>Jackery 1000 (1002Wh portable battery): $827</li>
+<li>Shoulder Dolly HandyLifter Carrying Strap: $13</li>
+<li>6-20P to 5-15 adapter: $8</li>
+<li>Sankaba/Sunsky EVSE L2 Charger (no grounding requirements): $96</li>
+</ul>
+<h3>Questions I’ve received</h3>
+<ul>
+<li>Why not place the battery in the top case? It’s too heavy: the top case on the CE-04 is only rated to carry 5kg (11 lbs).</li>
+<li>Can you charge the Jackery 1000 up at an EV charger? Probably with the right adapters, but you wouldn’t want to, as it takes 8 hours to recharge. The newer 1000 Pro charges in 1.8 hours.</li>
+<li>Is there a 220V option? Yes! I could not find any in the US, but you can buy 220V portable power stations in Europe. They will even charge the CE-04 charge twice as fast!</li>
+</ul>
+<p>If you have any questions, find me on<a href="https://triangletoot.party/@thomrstrom"> Mastodon</a> or e-mail me at t<AT>stromberg.org.</p>
+
+</article>
+
+
+</body>
+</html>

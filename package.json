@@ -1,0 +1,17 @@
+{
+  "name": "personal-website",
+  "version": "1.0.0",
+  "description": "A personal website built with Eleventy.",
+  "main": ".eleventy.js",
+  "scripts": {
+    "start": "eleventy --serve",
+    "build": "eleventy"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@11ty/eleventy": "^2.0.1",
+    "@11ty/eleventy-plugin-rss": "^1.2.0"
+  }
+}

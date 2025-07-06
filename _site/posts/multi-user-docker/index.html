@@ -1,0 +1,39 @@
+<p>Need to make Docker on macOS available to any user who connects in remotely? It can be done!</p>
+<p>First, be aware that <code>docker</code> is not designed to be securely shared among multiple users. Please assume that anyone who has access to <code>docker</code> is effectively equivalent to `root'.</p>
+<p>This assumes that users will be interacting with <code>docker</code> via the command-line, rather than graphically. It also assumes that the environment is such that allows a single user to be automatically logged into via the GUI, but this is mostly out of laziness rather than an underlying technical restriction.</p>
+<ol>
+<li>
+<p>Choose an account that Docker Desktop will run as. I recommend creating a <code>docker</code> user, but it could be any account. This account does not need admin access.</p>
+</li>
+<li>
+<p>Open <code>Settings -&gt; Users &amp; Groups -&gt; Login Options</code>, and ensure that this user is automatically logged into.</p>
+</li>
+<li>
+<p>Created a shared containers directory:</p>
+</li>
+</ol>
+<pre><code class="language-shell">sudo mkdir -p /Users/Shared/Library/Containers
+sudo chown docker:staff /Users/Shared/Library/Containers
+sudo chmod -R 770 /Users/Shared/Library/Containers/
+</code></pre>
+<ol start="4">
+<li>Login graphically with the account that will run Docker and start <code>/Applications/Docker.app</code>, answer any questions it might have.</li>
+<li>Open <code>Settings -&gt; Users &amp; Groups -&gt; Login Items</code>, and drag the <code>Docker</code> app to it.</li>
+<li>Quit <code>Docker Desktop</code> via the menu item</li>
+<li>Open <code>Terminal</code> and move your Docker data to a shared location that can be written to by other users:</li>
+</ol>
+<pre><code class="language-shell">mv ~/Library/Containers/com.docker.docker /Users/Shared/Library/Containers
+chmod -R 770 /Users/Shared/Library/Containers/com.docker.docker
+chmod -R +a &quot;group:staff allow list,add_file,search,add_subdirectory,delete_child,readattr,writeattr,readextattr,writeextattr,readsecurity,file_inherit,directory_inherit&quot; /Users/Shared/Library/Containers/com.docker.docker
+chmod -R g+rw /Users/Shared/Library/Containers/com.docker.docker/Data
+</code></pre>
+<p>Then link your local Docker data to this shared source, and make sure that others can traverse into this folder to resolve the socket symlink:</p>
+<pre><code class="language-shell">ln -s /Users/Shared/Library/Containers/com.docker.docker ~/Library/Containers/com.docker.docker
+chmod g+x ~/Library ~/Library/Containers
+</code></pre>
+<ol start="6">
+<li>Restart <code>/Applications/Docker.app</code> to test</li>
+<li>SSH into the host as another username, and run <code>docker run mariadb</code> to test.</li>
+<li>Reboot host and reconnect via ssh to test (it may take a moment for Docker to start up)</li>
+</ol>
+<p>This is the configuration we use for the #kernelcafe. Please add your improvements to the comments!</p>

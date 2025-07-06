@@ -1,2 +1,0 @@
-# hugosite
-Hugo-based website

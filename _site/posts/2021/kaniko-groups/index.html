@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Go &amp; secondary groups: a kaniko adventure! | choosehappy.dev</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li class="site-title">☀️ <a href="/">choosehappy.dev</a></li>
+        <li><a href="/posts">posts</a></li>
+        <li><a href="https://www.linkedin.com/in/thomas-str%C3%B6mberg-9977261/">linkedin</a></li>
+        <li><a href="https://triangletoot.party/@thomrstrom">mastodon</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  
+<article>
+  <h1>Go &amp; secondary groups: a kaniko adventure!</h1>
+  <div class="post-meta">
+    <p>Published on February 25, 2021</p>
+  </div>
+  <p><em>Originally posted on my personal blog in April 2020</em></p>
+<p>I wanted to get my feet wet with understanding <a href="https://github.com/GoogleContainerTools/kaniko">Kaniko</a>,
+an open-source in-cluster builder for Docker images. I happen to work with one of the maintainers, Tejal,
+and I asked her if there was any interesting UNIX-internals sort of bugs that might be interesting.</p>
+<p>Here's the <a href="https://github.com/GoogleContainerTools/kaniko/issues/1097">mystery issue</a>: &quot;The USER command does not set the correct gids, so extra groups are dropped&quot;. Here's an example to reproduce it:</p>
+<pre><code class="language-docker">FROM ubuntu:latest
+RUN groupadd -g 20000 bar
+RUN groupadd -g 10000 foo
+RUN useradd -c &quot;Foo user&quot; -u 10000 -g 10000 -G bar -m foo
+RUN id foo
+USER foo
+RUN id
+</code></pre>
+<p>In an ideal world, both &quot;id&quot; commands should give the same output, but the second one did not include <code>foo</code>'s membership in <code>bar</code>. This definitely sounded
+like a secondary group issue. I happened to know that secondary groups were bolted onto the UNIX implementation some 10 years later than primary groups (SVR4, by way of BSD).</p>
+<h2>How to reproduce</h2>
+<p>First, get a shell into the Kaniko debug image, mounting in the out/ and integration/ subdirectory:</p>
+<pre><code class="language-shell">docker run -it --entrypoint /busybox/sh -v &quot;$HOME&quot;/.config/gcloud:/root/.config/gcloud -v (pwd)/integration:/workspace -v (pwd)/out:/out gcr.io/kaniko-project/executor:debug
+</code></pre>
+<p>I placed their Dockerfile into <code>kaniko/integration/1097</code>, which was mounted as <code>/workspace</code>. I could then trivially reproduce their case using kaniko:</p>
+<pre><code class="language-shell">/kaniko/executor -f 1097 --context=dir://workspace --destination=gcr.io/kaniko/test --tarPath=/tmp/image.tar --no-push
+</code></pre>
+<h2>Finding the culprit</h2>
+<p>The first question was: how does Kaniko implement user switching? Are they switching in such a way that populates secondary groups? I ask because the standard syscalls (<code>seteuid</code>, <code>setegid</code>) do not implement secondary groups: one has to instead call <a href="https://linux.die.net/man/2/setgroups"><code>setgroups</code></a>. Here's what I found:</p>
+<pre><code class="language-go">cmd.SysProcAttr.Credential = &amp;syscall.Credential{Uid: uid, Gid: gid}
+</code></pre>
+<p><code>[SysProcAttr](https://golang.org/pkg/syscall/#SysProcAttr)</code> is not exactly a well-known feature in Go, but it's perfect for setting exec attributes such as:</p>
+<ul>
+<li><code>Chroot</code> - lock the process into a directory</li>
+<li><code>Pdeathsig</code> -  Signal that the process will get when its parent dies (Linux only)</li>
+<li>... and many options for user namespacing: handy for container tools.</li>
+</ul>
+<p>So, I figured it would be easy enough to improve the function in such a way that performs secondary group impersonation. The trick to you, dear reader, is to find the flaw!</p>
+<pre><code class="language-go">func impersonate(userStr string) (*syscall.Credential, error) {
+   ...
+   groups := []uint32{}
+   gidStr, err := u.GroupIds()
+   logrus.Infof(&quot;groupstr: %s&quot;, gidStr)
+
+   for _, g := range gidStr {
+       i, err := strconv.ParseUint(g, 10, 32)
+       if err != nil {
+           return nil, errors.Wrap(err, &quot;parseuint&quot;)
+       }
+       groups = append(groups, uint32(i))
+   }
+
+   return &amp;syscall.Credential{
+       Uid:    uid,
+       Gid:    gid,
+       Groups: groups,
+   }, nil
+}
+</code></pre>
+<p>After running <code>make</code>, I hop back into the container to run the repro case, and I'm perplexed by the log message:</p>
+<pre><code>INFO[0013] u.GroupIds returned: []
+</code></pre>
+<p>Is kaniko running in some alternate chroot universe where it can't see? I double check by adding a shell command:</p>
+<pre><code class="language-go">out, err = exec.Command(&quot;grep&quot;, &quot;foo&quot;, &quot;/etc/group&quot;).Output()
+</code></pre>
+<p>The answer is no. At this point, there are only two options in my mind. Either this is a Go bug, or, if Go is using libc to make this call (likely),
+it's a libc bug, or at least a disagreement between the two systems. As soon as you have made the decision to blame the compiler, it's time to gather evidence, typically by making a simpler test case. I opt first to investigate if Go is using libc to look up the list of secondary groups, starting with:</p>
+<ul>
+<li><a href="https://golang.org/src/os/user/listgroups_unix.go">os/user/listgroups_unix.go</a></li>
+</ul>
+<p>A couple of nested functions later, and you can see that it's calling:</p>
+<pre><code class="language-c">static int mygetgrouplist(const char* user, gid_t group, gid_t* groups, int* ngroups) {
+  return getgrouplist(user, group, groups, ngroups);
+}
+</code></pre>
+<p>This is almost the same implementation you see in busybox's <code>id</code> command <a href="https://github.com/brgl/busybox/blob/master/coreutils/id.c">source</a></p>
+<pre><code class="language-c">static int get_groups(const char *username, gid_t rgid, gid_t *groups, int *n)
+{
+  int m;
+   if (username) {
+   	 m = getgrouplist(username, rgid, groups, n);
+   	 return m;
+   }
+</code></pre>
+<p>Now, it's possible that Go is setting <code>ngroups</code> to 0, so we just build a little test case program:</p>
+<pre><code class="language-go">func main() {
+    u, err := user.Lookup(os.Args[1])
+    if err != nil {
+   	 panic(fmt.Sprintf(&quot;lookup failed: %v&quot;, err))
+    }
+</code></pre>
+<p>The test program runs great on macOS, but when I use <a href="https://github.com/karalabe/xgo">xgo</a> to cross-compile Kaniko for Linux, all it outputs is:</p>
+<pre><code class="language-shell">-rwxr-xr-x    1 0        0          2125099 Mar 28 20:26 ggroups-linux-amd64
+
+# ./ggroups-linux-amd64
+/busybox/sh: ./ggroups-linux-amd64: not found
+</code></pre>
+<h2>Not found? Huh?</h2>
+<p>If you ever see an <code>./program: not found</code> error in UNIX, it typically means one of three things:</p>
+<ul>
+<li>The program specifies an invalid <code>#!</code> line</li>
+<li>The binary needs a shared library that does not exist</li>
+<li>The binary is for the wrong architecture</li>
+</ul>
+<p>In this case, I suspected #2, because I see that busybox is in use, chances are pretty high that this Docker image lacks libc. This environment
+does not have <code>ldd</code>, but it has <code>strings</code>, so I can get some hints about the binary that was built:</p>
+<pre><code class="language-shell">strings /out/ggroups-linux-amd64  | head
+bhkFaBAPgWy3KAp2RQcd/llKGprZSMM7cCxIzwmJ9/0QgnPM9q9pk--9IIyIXn/X9bTurj9MBmKtnVL-ANT
+/lib64/ld-linux-x86-64.so.2
+ATUSH
+</code></pre>
+<p>It looks like the right architecture, but yeah, that library doesn't exist. Just to confirm my sanity, I confirmed this program works great in an ubuntu container. I immediately suspect that either kaniko's user environment is trash, or kaniko is up to shenanigans in their <code>Makefile</code>. The easier is easier to check, and it doesn't take long to notice:</p>
+<pre><code class="language-make">out/executor: $(GO_FILES)
+	GOARCH=$(GOARCH) GOOS=linux CGO_ENABLED=0 go build -ldflags \
+       $(GO_LDFLAGS) -o $@ $(EXECUTOR_PACKAGE)
+</code></pre>
+<p>God damnit. kaniko works because they disable <code>cgo</code> to workaround the lack of a libc environment. Look back at <a href="https://golang.org/src/os/user/listgroups_unix.go">listgroups_unix.go</a> - it uses C code, and the build rule specifically states only to build with cgo. If we look at the fallback implementation, we see:</p>
+<pre><code class="language-go">func listGroups(*User) ([]string, error) {
+    if runtime.GOOS == &quot;android&quot; || runtime.GOOS == &quot;aix&quot; {
+        return nil, fmt.Errorf(&quot;user: GroupIds not implemented on %s&quot;, runtime.GOOS)
+    }
+    return nil, errors.New(&quot;user: GroupIds requires cgo&quot;)
+}
+</code></pre>
+<p>But wait - we didn't see an error in our impersonate function! I try to compile it without cgo:</p>
+<pre><code class="language-shell">env CGO_ENABLED=0 go run ggroups.go root
+panic: groupids failed: user: GroupIds requires cgo
+
+goroutine 1 [running]:
+main.main()
+    /Users/tstromberg/src/ggroups/ggroups.go:18 +0x117
+exit status 2
+</code></pre>
+<h2>The mystery deepens</h2>
+<p>If you see an error in one environment, and not the other, chances are either:</p>
+<ul>
+<li>A compiler error</li>
+<li>A kernel error</li>
+<li>You forgot to check the error code.</li>
+</ul>
+<p>It's almost always the last option. Sure enough, I returned err but never checked it:</p>
+<pre><code class="language-go">   gidStr, err := u.GroupIds()
+   logrus.Infof(&quot;groupstr: %s&quot;, gidStr)
+</code></pre>
+<p>As soon as I noticed this, I walked away from my computer for an hour. If I had configured my editor to show errors from <a href="https://github.com/golangci/golangci-lint">golangci-lint</a>, I would have caught this immediately and saved myself 20 minutes.</p>
+
+</article>
+
+
+</body>
+</html>

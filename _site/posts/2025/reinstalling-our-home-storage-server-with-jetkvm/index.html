@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reinstalling our home storage server with JetKVM | choosehappy.dev</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="alternate" type="application/atom+xml" title="choosehappy.dev RSS Feed" href="/feed.xml">
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-left">
+        <div class="site-title">☀️ <a href="/">choosehappy.dev</a></div>
+        <div class="site-desc">thomas strömberg's happy little corner of the internet.</div>
+      </div>
+      <ul class="nav-right">
+        <li><a href="/posts">posts</a></li>
+        <li><a href="https://www.linkedin.com/in/thomas-str%C3%B6mberg-9977261/">linkedin</a></li>
+        <li><a href="https://triangletoot.party/@thomrstrom">mastodon</a></li>
+        <li><a href="/feed.xml" title="RSS Feed">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3.429 14.25c1.04 0 1.92.35 2.64 1.05.72.7 1.08 1.58 1.08 2.64 0 1.04-.36 1.92-1.08 2.64-.72.72-1.6 1.08-2.64 1.08-1.06 0-1.94-.36-2.64-1.08-.7-.72-1.05-1.6-1.05-2.64 0-1.06.35-1.94 1.05-2.64.7-.7 1.58-1.05 2.64-1.05zm0-4.5c2.32 0 4.42.87 6.3 2.61 1.88 1.74 2.82 3.9 2.82 6.48h-3.15c0-1.64-.6-3.05-1.8-4.23-1.2-1.18-2.62-1.77-4.26-1.77V9.75zm0-4.5c3.71 0 6.9 1.35 9.57 4.05 2.67 2.7 4.01 5.94 4.01 9.72h-3.15c0-2.88-1.05-5.37-3.15-7.47-2.1-2.1-4.59-3.15-7.47-3.15V5.25z"/>
+          </svg>
+        </a></li>
+      </ul>
+    </nav>
+  </header>
+
+  
+<article>
+  <h1>Reinstalling our home storage server with JetKVM</h1>
+  <div class="post-meta">
+    <p>Published on June 20, 2025</p>
+  </div>
+  <p>My home office space has been offline for the last two months due to the invasion of 20,000 honeybees. This article is not about that story.</p>
+<p>However, when putting everything back into its place, I knew my home storage server running FreeBSD 15-CURRENT was overdue for a wipe and reinstall: it’d been 4 houses, several years, and a handful of domain names since it was initially installed.</p>
+<p>One thing I hate about having a home lab is needing to crawl around to fetch a keyboard and monitor for reinstall and recovery ops. Enter the JetKVM, a nifty little device that promised to make this painful process a bit more bearable.</p>
+<h2>Setting Up the JetKVM</h2>
+<p><img src="https://i.snap.as/reYWlYKR.jpg" alt=""></p>
+<p>JetKVM is a tiny &amp; cheap hardware KVM-over-IP solution that lets you remotely control servers via a web browser. I’d ordered mine months ago via Kickstarter, but today was my first shot at using it.</p>
+<p>Getting the JetKVM ready was refreshingly straightforward:</p>
+<ul>
+<li>Connect the HDMI cable</li>
+<li>Connect the USB-C cable</li>
+<li>Connect Ethernet</li>
+<li>Visit IP displayed on it’s tiny little screen with a web browser</li>
+</ul>
+<p>Once I turned the machine on, I was greeted with a familiar boot screen that we’ve seen on PC devices since the 1980’s.</p>
+<h2>Mapping Out the Existing Storage</h2>
+<p>I had 10TB of data on this machine to preserve, so I wanted to get a quick map of which disks were what before accidentally wiping something. If I’d been less lazy, I would have unplugged the drives with data.</p>
+<p><code>zpool status -v</code> revealed my storage layout:</p>
+<ul>
+<li><strong>slow</strong>: ada1 (14TB spinning disk - my bulk storage)</li>
+<li><strong>zroot</strong>: nda0p4 (NVMe drive confirmed via the <a href="https://man.freebsd.org/cgi/man.cgi?nda(4)">nda(4) man page</a>)</li>
+<li><strong>fast</strong>: ada0 (4TB SATA drive)</li>
+</ul>
+<p>FreeBSD's device naming is logical once you know the patterns: <code>nda</code> for NVMe, <code>ada</code> for SATA/PATA drives.</p>
+<h2>Booting FreeBSD ISO using JetKVM Virtual Media</h2>
+<p>From my MacBook Pro, I started to setup a bootable USB drive using this classic incantation:</p>
+<pre><code>sudo diskutil list | grep external
+/dev/disk4 (external, physical):
+</code></pre>
+<pre><code>sudo dd if=$HOME/Downloads/FreeBSD-15.0-CURRENT-amd64-20250612-e6928c33f60c-277883-mini-memstick.img of=/dev/disk4s1 bs=10240
+</code></pre>
+<p>I used the JetKVM virtual keyboard to insert the “Del” button to enter BIOS and set the boot device order up so that it would boot off of the USB stick. But wait, what’s this “JetKVM Virtual Media” device?</p>
+<p><img src="https://i.snap.as/MzkNuTvW.png" alt=""></p>
+<p>Then I noticed this curious “Virtual Media” button in the JetKVM screen - was it possible to upload a disk image to this thing and boot it up without worrying about USB sticks and dd commands? It turns out you can - what a game changer:</p>
+<ul>
+<li>Click “Virtual Media</li>
+<li>Click “Add New Media”</li>
+<li>Click “JetKVM Storage Mount”</li>
+<li>Select local file, click Upload</li>
+<li>Click “Mount File”</li>
+</ul>
+<p><img src="https://i.snap.as/tptuHGa1.png" alt=""></p>
+<p>One quirk I discovered for FreeBSD is that only the CD/DVD ISO image boots properly via JetKVM Virtual Media, not the memstick images.</p>
+<h2>Navigating Installation Quirks</h2>
+<p><img src="https://i.snap.as/JZ2KuK5n.png" alt=""></p>
+<p>It’s been nearly 30 years after my first FreeBSD installation (2.2.0), and I still find new quirks that cause me to go into menu loops. This time it did not like that my system already had a “zroot” pool defined. This was easy enough to fix by selecting the “Shell” option from the partitioning menu:</p>
+<pre><code>zpool import zroot
+zpool destroy zroot
+</code></pre>
+<p>After that, the rest was smooth sailing.</p>
+<p><img src="https://i.snap.as/7uQwCNof.png" alt=""></p>
+<h2>Configuring Remote Access</h2>
+<p>The JetKVM is fine as an emergency connectivity option, but nothing beats SSH and a static IP for ease of use. I immediately dove into <code>/etc/rc.conf</code> and defined:</p>
+<pre><code class="language-bash">ifconfig_igb0=&quot;inet 10.9.8.7 netmask 255.255.255.0&quot;
+</code></pre>
+<p>FreeBSD makes it easy to reconfigure interfaces based on the stored configuration:</p>
+<pre><code class="language-bash">/etc/rc.d/netif restart
+</code></pre>
+<p>I like configuring SSH (<code>/etc/sshd/sshd.conf</code>) avoid brute-force attacks from flooding the logs, as well as make them hopeless:</p>
+<pre><code>Port 32022
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PermitRootLogin yes
+</code></pre>
+<p>Another quick service restart and SSH was ready:</p>
+<pre><code class="language-bash">/etc/rc.d/sshd restart
+</code></pre>
+<h2>The Connectivity Plot Twist</h2>
+<p>Here's where my smooth reinstall hit a snag. After getting everything configured, I couldn't reach GitHub:</p>
+<pre><code class="language-bash">$ git clone https://github.com/tstromberg/commit-etc.git
+Cloning into 'commit-etc'...
+fatal: unable to access 'https://github.com/tstromberg/commit-etc.git/': Failed to connect to github.com port 443 after 23 ms: Could not connect to server
+</code></pre>
+<p>DNS was working fine - <code>host github.com</code> returned the expected results:</p>
+<pre><code class="language-bash">$ host github.com
+github.com has address 140.82.114.4
+github.com mail is handled by 10 alt4.aspmx.l.google.com.
+github.com mail is handled by 1 aspmx.l.google.com.
+...
+</code></pre>
+<p>But trying to actually connect revealed the issue:</p>
+<pre><code class="language-bash">$ curl -vvv github.com
+== Info: Host github.com:80 was resolved.
+== Info: IPv4: 140.82.112.4
+== Info:   Trying 140.82.112.4:80...
+== Info: Immediate connect fail for 140.82.112.4: Network is unreachable
+== Info: Failed to connect to github.com port 80 after 23 ms: Could not connect to server
+curl: (7) Failed to connect to github.com port 80 after 23 ms: Could not connect to server
+</code></pre>
+<p>The culprit? I'd forgotten to set the default gateway. I added <code>defaultrouter=&quot;10.9.8.1&quot;</code> to <code>/etc/rc.conf</code> and restarted routing:</p>
+<pre><code class="language-bash">/etc/rc.d/routing restart
+</code></pre>
+<p>I liked having the extra security blanket of the JetKVM in case I botched the networking configuration.</p>
+<h2>Essential Tools and Services</h2>
+<p>Once connectivity was restored, I could install my usual set of server tools:</p>
+<pre><code class="language-bash">pkg install tmux fish git doas rsync go syncthing
+</code></pre>
+<p>SyncThing gets special mention here as my go-to solution for keeping files synchronized across machines. It deserves it's own article, but getting it running is just:</p>
+<pre><code class="language-bash">sysrc syncthing_enable=YES
+/usr/local/etc/rc.d/syncthing start
+</code></pre>
+<p>The <code>sysrc</code> command is FreeBSD's clean way to modify <code>/etc/rc.conf</code> programmatically - less error prone than manual edits.</p>
+<h2>Configuration Management</h2>
+<p>I also needed to get my system configuration management back online. My approach is to keep <code>/etc</code> under version control with a simple script setup:</p>
+<pre><code class="language-bash">git clone https://github.com/tstromberg/commit-etc.git
+
+cp commit-etc.sh $HOME/commit-etc
+
+$HOME/commit-etc/commit-etc.sh
+
+echo &quot;0 0 * * * $HOME/commit-etc/commit-etc.sh&quot; |crontab -e
+</code></pre>
+<p>Now any system changes I make will be automatically translated into git commits.</p>
+<h2>Panic!</h2>
+<p>The FreeBSD “CURRENT” stream is considered “alpha” quality and well-known for stability issues. Even so, I was surprised to get a panic so quickly, induced by my attempt to sync terrabytes worth of data to an external drive via USB 3.0:</p>
+<p><img src="https://i.snap.as/2TlmwQiF.png" alt=""></p>
+<p>The JetKVM proved its worth here too - as it made persistent out-of-band access to my server a painless affair. Otherwise, I would have had to fetch a monitor out to see the panic message.</p>
+<p>After some tweaks, FreeBSD 15-CURRENT is running smoothly now, with a clean ZFS setup and all my essential services back online. The combination of solid documentation (those man pages!), logical device naming, and straightforward service management makes FreeBSD a pleasure to work with, even during major system changes.</p>
+
+</article>
+
+
+</body>
+</html>

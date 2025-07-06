@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The anatomy of a great playbook entry | choosehappy.dev</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li class="site-title">☀️ <a href="/">choosehappy.dev</a></li>
+        <li><a href="/posts">posts</a></li>
+        <li><a href="https://www.linkedin.com/in/thomas-str%C3%B6mberg-9977261/">linkedin</a></li>
+        <li><a href="https://triangletoot.party/@thomrstrom">mastodon</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  
+<article>
+  <h1>The anatomy of a great playbook entry</h1>
+  <div class="post-meta">
+    <p>Published on May 20, 2021</p>
+  </div>
+  <p>What if you could easily reduce the length of outages by 3X?</p>
+<p>According to the <a href="https://sre.google/sre-book/introduction/">SRE book</a>, &quot;recording the best practices ahead of time in a playbook produces roughly a 3x improvement in MTTR&quot;.  This improvement mirrors my experience with well-written playbooks.</p>
+<p>So what makes a playbook entry &quot;great&quot;?</p>
+<h2>Philosophy</h2>
+<p>Remember how you felt in your first on-call rotation, when you were paged at 3am for a system you barely understood? <strong>Write your playbook entries for that person.</strong></p>
+<p>Playbooks should provide just enough context to confidently work through an incident, without providing extraneous content that will be a burden to keep up-to-date.</p>
+<p>Be wary of playbooks that offer exact remediation steps: these are often a sign of sacrificing human blood to a system that should be automated.</p>
+<h2>Discovery</h2>
+<p>Alerts should always include the relevant playbook URL. Otherwise, you will introduce human error by introducing the possibility of the responder following the incorrect playbook.</p>
+<p>Consider including the alert name in the playbook URL to make it easier to find. This also the alert template to be templatized in some systems. For example: <code>https://playbooks/%%ALERT_NAME%%</code></p>
+<h2>Structure</h2>
+<p>Playbooks are the easiest to scan through in an emergency when they have a consistent structure. The exact best structure may differ depending on the organization, but this is what has worked for me:</p>
+<p>The structure that works best is highly dependent on your team's culture, but this is what has worked for me:</p>
+<ul>
+<li>
+<p><strong>Severity</strong>: How to assess the criticality of this alert from your team's point of view. Is it a slow-burning issue that generates tickets, a critical paging event, or does the severity depend on the duration?</p>
+</li>
+<li>
+<p><strong>Impact</strong>: How are your customers impacted by this alert? Often a one-liner, for example: &quot;None immediately. If ignored, may result in revenue-impacting customer provisioning failures due to resource exhaustion&quot;</p>
+</li>
+</ul>
+<ul>
+<li>
+<p><strong>Metrics</strong>: 1-2 graphs showing the impact, duration, and if the effect is worsening. Inline live-updating graphs work best, as they can prevent the incident responder from making unnecessary changes when the problem is dissipating. Hyperlinks are nearly as good.</p>
+</li>
+<li>
+<p><strong>Background</strong>: What should a new person on the on-call rotation know about this system? Be terse, providing a hyperlink for more information and/or an architectural diagram. To reduce maintenance burden and cognitive load during incident response, share this section between multiple playbook entries via templating.</p>
+</li>
+<li>
+<p><strong>Mitigation</strong>: What are the recommended steps to mitigate the issue? This is often in checklist-style and may include steps for rolling back or redirecting traffic.</p>
+</li>
+<li>
+<p><strong>Debugging</strong>: How should one get started digging into why this alert is firing? For example:</p>
+<ol>
+<li>Check for recent fatal error messages:</li>
+<li>Check the cluster for free disk space:</li>
+<li>Check <url> to see when the last release went out</li>
+</ol>
+</li>
+<li>
+<p><strong>References</strong>: Links to the alert configuration, or code that generates the metric used by the alert, can be useful in understanding the underlying behavior. Post-mortems can also be valuable.</p>
+</li>
+</ul>
+<h2>Formatting</h2>
+<ul>
+<li>Be concise</li>
+<li>Bulleted or numbered lists instead of paragraphs.</li>
+</ul>
+<p>The <a href="https://kubernetes.io/docs/contribute/style/style-guide/">Kubernetes Documentation Style Guide</a>  has great recommendations for technical documentation, but the most important for playbooks is: <strong>make your commands trivial to copy and paste.</strong></p>
+<ul>
+<li>Do not include the command prompt. S
+<ul>
+<li>See: <a href="https://tanelpoder.com/posts/how-to-stay-safe-in-shell/">data loss due to &gt; character in prompt</a></li>
+</ul>
+</li>
+<li>Separate commands from example output</li>
+<li>Do not include real but unrelated host, site, or cluster names in your example command.
+<ul>
+<li>I once saw an outage spread when a responder copied an example command with the intent to edit the hostnames before pressing enter. They pressed enter first.</li>
+</ul>
+</li>
+</ul>
+<h2>Maintenance</h2>
+<p>Keep playbooks up to date by:</p>
+<ul>
+<li>
+<p>Regularly scheduled <a href="%5Bhttps://sre.google/sre-book/accelerating-sre-on-call/">&quot;Wheel of Misfortune&quot; role-playing game sessions</a>, where the previous on-call engineer walks the current on-call engineer through a pager response scenario.</p>
+</li>
+<li>
+<p>Post-mortem action items that suggest playbook updates to decrease the resolution time for future pages for the same alert.</p>
+</li>
+</ul>
+<p>Big-bang efforts such as auditing all of the playbooks for relevance are best made once initially, to get the playbooks into the same structure. I have never seen quarterly playbook reviews work.</p>
+<p><em>Special thanks to <a href="https://josebiro.medium.com/">Joseph Bironas</a> for editorial feedback and ideas for this article.</em></p>
+
+</article>
+
+
+</body>
+</html>

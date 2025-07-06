@@ -1,0 +1,43 @@
+<p>RVBoards has a handy <a href="https://www.rvboards.org/single-blog-1.php?id=93">Getting Started with BeagleV™ - StarLight</a> guide that I followed to get the board up and running.</p>
+<p>Step 1: figuring out where the fan leads go to: red (5V power) goes to pin 4, black (ground) goes to pin 6.</p>
+<p>Step 2: Download latest Fedora image from the <a href="https://github.com/starfive-tech/Fedora_on_StarFive">starfive-tech/Fedora_on_StarFive</a> repository. At the time of this writing, it's 2021-December-26, which uses the 5.16-rc6+ kernel:</p>
+<pre><code class="language-shell">curl -LO https://fedora.starfivetech.com/pub/downloads/VisionFive-release/Fedora-riscv64-jh7100-developer-xfce-Rawhide-20211226-214100.n.0-sda.raw.zst
+</code></pre>
+<p>It turns out that my download would fail every couple of hundred megabytes with <code>HTTP/2 stream 0 was not closed cleanly: INTERNAL_ERROR (err 2)</code>, so I wrote a small fish loop to retry and resume the download until complete:</p>
+<pre><code class="language-shell">while ! curl -LO -C - http://fedora.starfivetech.com/pub/downloads/VisionFive-release/Fedora-riscv64-jh7100-developer-xfce-Rawhide-20211226-214100.n.0-sda.raw.zst; sleep 1; end
+</code></pre>
+<p>Step 3: Confirm checksum and decompress image</p>
+<pre><code class="language-shell">unzstd Fedora-riscv64-jh7100-developer-xfce-Rawhide-20211226-214100.n.0-sda.raw.zst
+sha256sum Fedora-riscv64-jh7100-developer-xfce-Rawhide-20211226-214100.n.0-sda.raw.zst
+</code></pre>
+<p>Step 4: Flash the image</p>
+<p>Since I'm on macOS, I use <a href="https://www.balena.io/etcher/">balenaEtcher</a> for it's handy UI, but dd works as well:</p>
+<pre><code class="language-shell"> sudo dd if=Fedora-riscv64-vic7100-dev-raw-image-Rawhide-202104161415.n.0-sda.raw of=&lt;device&gt; bs=8M status=progress
+</code></pre>
+<p>Step 5: Serial</p>
+<p>Compared to other recent arm64 boards I've used, the BeagleV has no built-in USB serial port, but it does have GPIO pins you can hook your own USB serial device up to. The guide called for GND in pin 6, TX in pin 8, and RX in pin 10. However, the fan also uses pin 6 for GND, so I opted for pin 14 instead. Once setup, the monstrosity appears:</p>
+<p>I normally use <code>minicom -b 115200</code>, but in order to learn something new today, I tried SerialTools. The important part is setting your baud to 115200, but you'll also want to turn local echo off.</p>
+<p>Step 6: Logging in!</p>
+<p>The default login is <code>riscv:starfive</code>.</p>
+<p>The output of <code>uname -a</code> shows that it's running Fedora 33:</p>
+<p><code>Linux fedora-starfive 5.15.0-61.fc33.riscv64 #1 SMP Wed Nov 10 20:58:14 CST 2021 riscv64 riscv64 riscv64 GNU/Linux</code></p>
+<p>Step 6: Network connectivity</p>
+<p>After plugging in an ethernet cable, I was able to get an IPv4 IP, but oddly enough, the host did not get an IPv6 address, which I'm going to need for this environment. This was easy enough to fix:</p>
+<pre><code class="language-shell">sudo sed -i 's/NETWORKING_IPV6=no/NETWORKING_IPV6=yes/g' /etc/sysconfig/network
+</code></pre>
+<p>But when I went  to restart the networking stack, it didn't go as planned:</p>
+<pre><code class="language-shell">$ sudo systemctl restart network
+Failed to restart network.service: Unit network.service not found.
+</code></pre>
+<p>That's because it's now managed by another system:</p>
+<pre><code class="language-shell">sudo nmcli con reload eth0
+</code></pre>
+<p>Step 7: Updates</p>
+<p>To update:</p>
+<p><code>sudo dnf update &amp;&amp; sudo dnf upgrade -y</code></p>
+<p>Sadly, there were no updates, so I wouldn't put anything security sensitive on this board:</p>
+<pre><code>Last metadata expiration check: 0:01:04 ago on Tue 08 Feb 2022 01:03:06 AM CST.
+Dependencies resolved.
+Nothing to do.
+Complete!
+</code></pre>

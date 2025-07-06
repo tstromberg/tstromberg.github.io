@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Persistent multi-user Docker on macOS | choosehappy.dev</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="alternate" type="application/atom+xml" title="choosehappy.dev RSS Feed" href="/feed.xml">
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-left">
+        <div class="site-title">☀️ <a href="/">choosehappy.dev</a></div>
+        <div class="site-desc">thomas strömberg's happy little corner of the internet.</div>
+      </div>
+      <ul class="nav-right">
+        <li><a href="/posts">posts</a></li>
+        <li><a href="https://www.linkedin.com/in/thomas-str%C3%B6mberg-9977261/">linkedin</a></li>
+        <li><a href="https://triangletoot.party/@thomrstrom">mastodon</a></li>
+        <li><a href="/feed.xml" title="RSS Feed">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3.429 14.25c1.04 0 1.92.35 2.64 1.05.72.7 1.08 1.58 1.08 2.64 0 1.04-.36 1.92-1.08 2.64-.72.72-1.6 1.08-2.64 1.08-1.06 0-1.94-.36-2.64-1.08-.7-.72-1.05-1.6-1.05-2.64 0-1.06.35-1.94 1.05-2.64.7-.7 1.58-1.05 2.64-1.05zm0-4.5c2.32 0 4.42.87 6.3 2.61 1.88 1.74 2.82 3.9 2.82 6.48h-3.15c0-1.64-.6-3.05-1.8-4.23-1.2-1.18-2.62-1.77-4.26-1.77V9.75zm0-4.5c3.71 0 6.9 1.35 9.57 4.05 2.67 2.7 4.01 5.94 4.01 9.72h-3.15c0-2.88-1.05-5.37-3.15-7.47-2.1-2.1-4.59-3.15-7.47-3.15V5.25z"/>
+          </svg>
+        </a></li>
+      </ul>
+    </nav>
+  </header>
+
+  
+<article>
+  <h1>Persistent multi-user Docker on macOS</h1>
+  <div class="post-meta">
+    <p>Published on January 31, 2021</p>
+  </div>
+  <p><img src="https://i.snap.as/o4QoLGWZ.webp" alt=""></p>
+<p>Ever wanted to run Docker on an unmanned macOS machine, where all users could have access to a working Docker command-line?</p>
+<p>First, be aware that <code>docker</code> is not designed to be securely shared among multiple users. As with Linux, Please assume that anyone who has access to <code>docker</code> is effectively equivalent to `root'.</p>
+<!--more-->
+<p>This assumes that users will be interacting with <code>docker</code> via the command-line, rather than graphically. It also assumes that the environment is such that allows a single user to be automatically logged into via the GUI, but this is mostly out of laziness rather than an underlying technical restriction.</p>
+<ol>
+<li>
+<p>Choose an account that Docker Desktop will run as. I recommend creating a <code>docker</code> user, but it could be any account. This account does not need admin access.</p>
+</li>
+<li>
+<p>Open <code>Settings -&gt; Users &amp; Groups -&gt; Login Options</code>, and ensure that this user is automatically logged into.</p>
+</li>
+<li>
+<p>Created a shared containers directory:</p>
+</li>
+</ol>
+<pre><code>sudo mkdir -p /Users/Shared/Library/Containers
+sudo chown docker:staff /Users/Shared/Library/Containers
+sudo chmod -R 770 /Users/Shared/Library/Containers/
+</code></pre>
+<ol start="4">
+<li>
+<p>Login graphically with the account that will run Docker and start <code>/Applications/Docker.app</code>, answer any questions it might have.</p>
+</li>
+<li>
+<p>Open <code>Settings -&gt; Users &amp; Groups -&gt; Login Items</code>, and drag the <code>Docker</code> app to it.</p>
+</li>
+<li>
+<p>Quit <code>Docker Desktop</code> via the menu item</p>
+</li>
+<li>
+<p>Open <code>Terminal</code> and move your Docker data to a shared location that can be written to by other users:</p>
+</li>
+</ol>
+<pre><code>mv ~/Library/Containers/com.docker.docker /Users/Shared/Library/Containers
+
+chmod -R 770 /Users/Shared/Library/Containers/com.docker.docker
+
+chmod -R +a &quot;group:staff allow list,add_file,search,add_subdirectory,delete_child,readattr,writeattr,readextattr,writeextattr,readsecurity,file_inherit,directory_inherit&quot; /Users/Shared/Library/Containers/com.docker.docker
+
+chmod -R g+rw /Users/Shared/Library/Containers/com.docker.docker/Data
+</code></pre>
+<p>Then link your local Docker data to this shared source, and make sure that others can traverse into this folder to resolve the socket symlink:</p>
+<pre><code>ln -s /Users/Shared/Library/Containers/com.docker.docker ~/Library/Containers/com.docker.docker
+
+chmod g+x ~/Library ~/Library/Containers
+</code></pre>
+<ol start="6">
+<li>
+<p>Restart <code>/Applications/Docker.app</code> to test</p>
+</li>
+<li>
+<p>SSH into the host as another username, and run <code>docker run mariadb</code> to test.</p>
+</li>
+<li>
+<p>Reboot host and reconnect via ssh to test (it may take a moment for Docker to start up)</p>
+</li>
+</ol>
+<p>This is the configuration we use for the #kernelcafe. Please add your improvements to the comments!</p>
+
+</article>
+
+
+</body>
+</html>

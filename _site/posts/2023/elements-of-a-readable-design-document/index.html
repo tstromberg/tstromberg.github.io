@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Writing Readable Design Docs | choosehappy.dev</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="alternate" type="application/atom+xml" title="choosehappy.dev RSS Feed" href="/feed.xml">
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-left">
+        <div class="site-title">☀️ <a href="/">choosehappy.dev</a></div>
+        <div class="site-desc">thomas strömberg's happy little corner of the internet.</div>
+      </div>
+      <ul class="nav-right">
+        <li><a href="/posts">posts</a></li>
+        <li><a href="https://www.linkedin.com/in/thomas-str%C3%B6mberg-9977261/">linkedin</a></li>
+        <li><a href="https://triangletoot.party/@thomrstrom">mastodon</a></li>
+        <li><a href="/feed.xml" title="RSS Feed">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3.429 14.25c1.04 0 1.92.35 2.64 1.05.72.7 1.08 1.58 1.08 2.64 0 1.04-.36 1.92-1.08 2.64-.72.72-1.6 1.08-2.64 1.08-1.06 0-1.94-.36-2.64-1.08-.7-.72-1.05-1.6-1.05-2.64 0-1.06.35-1.94 1.05-2.64.7-.7 1.58-1.05 2.64-1.05zm0-4.5c2.32 0 4.42.87 6.3 2.61 1.88 1.74 2.82 3.9 2.82 6.48h-3.15c0-1.64-.6-3.05-1.8-4.23-1.2-1.18-2.62-1.77-4.26-1.77V9.75zm0-4.5c3.71 0 6.9 1.35 9.57 4.05 2.67 2.7 4.01 5.94 4.01 9.72h-3.15c0-2.88-1.05-5.37-3.15-7.47-2.1-2.1-4.59-3.15-7.47-3.15V5.25z"/>
+          </svg>
+        </a></li>
+      </ul>
+    </nav>
+  </header>
+
+  
+<article>
+  <h1>Writing Readable Design Docs</h1>
+  <div class="post-meta">
+    <p>Published on June 5, 2023</p>
+  </div>
+  <p>A reposting from my Google Doc at <a href="https://tinyurl.com/readable-dd">https://tinyurl.com/readable-dd</a></p>
+<h2><strong>Why bother?</strong></h2>
+<p><em><strong>Circulating a design document is like putting your idea up for code review.</strong></em></p>
+<p>Submitting ideas to the scrutiny of peer review is your team's best defense against engineering incompatible with its principles.</p>
+<p>All humans have blind spots. Your goal as an author is to gather enough input to reveal them before execution. Issues found during design are <a href="https://www.researchgate.net/publication/255965523_Integrating_Software_Assurance_into_the_Software_Development_Life_Cycle_SDLC">6X cheaper</a> to fix than during implementation:</p>
+<p><img src="https://i.snap.as/tN45o8UW.png" alt=""></p>
+<p>The questions that reviewers should have in their mind while reading the document are:</p>
+<ul>
+<li>Does this fit with my organization's principles?</li>
+<li>Could the proposed implementation be made simpler?</li>
+<li>Are there alternative approaches to consider?</li>
+<li>What additional concerns should be addressed?</li>
+</ul>
+<!--more-->
+<h2>10 Elements of Readable Design Documents</h2>
+<h3>1. Optimized for reading</h3>
+<p><em><strong>Be respectful of your reader's time.</strong></em></p>
+<p>Design documents should be just long enough to convey your novel idea and no longer.  The longer your design document, the less likely it is to be read and understood.</p>
+<p>If your design document is over seven pages long, relocate supporting content into separate documents and add hyperlinks. If your design document is over 10 pages long, you are not respecting your reader's time.</p>
+<h3>2. Grounded by context</h3>
+<p>Why do we need this thing?</p>
+<p>Design documents often have a shelf-life of 5-10 years and may be read by hundreds of engineers. <em><strong>Write design documents for the engineers that come after you.</strong></em></p>
+<p>Provide a Background section to ground all readers in the same context that you have as an author. This section should describe how this became a problem, why it is worth solving, and whether anyone has previously attempted to solve it. This section should not reference the proposed design.</p>
+<h3>3. Focused content</h3>
+<p><em><strong>Most design documents should not include code or configuration examples.</strong></em></p>
+<p>If an example is critical to understanding a design (for example, a new API or config file format), show an example or two, but stay under 20 lines total.</p>
+<p>Including code encourages <a href="https://exceptionnotfound.net/bikeshedding-the-daily-software-anti-pattern/">bike-shedding</a> and distracts reviewers from reviewing the novel portions of your design and architecture. Code changes are better reviewed down the line using code-review tools, where more context is available.</p>
+<h3>4. Considers alternatives</h3>
+<p>The most critical section of a design document is the enumeration of ideas imagined and why they are no longer being considered. This section sends a message to prospective reviewers that you've done your homework and should serve to answer the question: &quot;Is this solution sized appropriately?&quot;</p>
+<p><em><strong>Your reviewers should be confident that your proposal is no more complicated than necessary and not simpler than required.</strong></em></p>
+<h3>5. Consistently structured</h3>
+<p>To promote easy reading and ensure that the most important topics are covered, introduce a standard design document template within your organization. Here's my ideal set to start with, roughly based on Google's own internal structure:</p>
+<ul>
+<li><strong>Objective:</strong> 1-2 line description of the impact you intend this new design to have</li>
+<li><strong>Background:</strong> What context is necessary to understand this design? Assume the reader is brand-new to the project. Do not mention your proposed solution.</li>
+<li><strong>Goals/Non-Goals:</strong> A bulleted list of your goals and what problems you do not intend to solve. This section helps illustrate design constraints.</li>
+<li><strong>Detailed Design:</strong> This is where you describe the novel part of your design.</li>
+<li><strong>Alternatives Considered:</strong> What ideas did you consider and discard?</li>
+<li><strong>(Reliability|Security|Privacy) Considerations:</strong> optional. Include where helpful.</li>
+</ul>
+<p>Noticeably missing are planning-related sections, as they come after design approval and are better tracked elsewhere. Keep your template concise and well-scoped to encourage folks to design early and design often.</p>
+<h3>6. Collaborative</h3>
+<p>To cover your blind spots, pair up with a co-author early on.</p>
+<p>Share your design document widely before it is fully polished.  Encourage peers to suggest improvements or make them directly. In my experience, Sharing a Google Doc invites more collaboration and comments than sharing a pull request.</p>
+<p>When feedback is light, set aside 10 minutes at the beginning of your next team meeting for attendees to read your document and add comments.</p>
+<h3>7. Measured Success</h3>
+<p>How will you prove whether or not this design was successful? Don't make the reviewer guess: paint them a picture of success.</p>
+<p>If this design intends to replace an existing system, include the deprecation of the previous system and comparisons to the existing behavior. For example:</p>
+<ul>
+<li>$new_system handles 100% of requests within 1ms (vs 100ms)</li>
+<li>$old_system code base is deleted</li>
+</ul>
+<p>Bonus points if you add a hyperlink to the authoritative data source.</p>
+<h3>8. Visual</h3>
+<p>Use this one strange trick to make your design doc memorable and encourage further reading: add an image.</p>
+<p><img src="https://i.snap.as/NBuZa0uF.jpg" alt=""></p>
+<p>It doesn't really matter what the image is, but consider adding a simple diagram to convey how your system interacts with others. If you can't come up with a diagram, insert a relevant meme or photo of your dog. People will remember it.</p>
+<h3>9. Legible</h3>
+<p>Do not assume that every reader is a native English speaker.</p>
+<p>Understanding new ideas is difficult enough in a native language and doubly so when it isn't in your native language. Do not make non-native readers suffer through poor grammar or slang.</p>
+<p>Just as you would run a lint-checker on code, use a grammar checker to find text that may confuse readers.  Many free options exist, from Google Docs to <a href="https://valentjn.github.io/vscode-ltex/">VS Code plug-ins</a> to purpose-driven solutions such as <a href="https://grammarly.com/">Grammarly</a>.</p>
+<h3>10. Annotated</h3>
+<p>Design docs should declare who the authors are, the design, when it was written, and where within the review process it is.  \</p>
+<p>Your design document will move across different document repositories over its lifetime, so don't rely on revision control or Google Docs metadata, which may not be visible to the reader.</p>
+<h3>References</h3>
+<ul>
+<li><a href="https://www.industrialempathy.com/posts/design-docs-at-google/">Design Docs at Google</a> by <a href="https://www.industrialempathy.com/about/">Malte Ubl</a></li>
+<li><a href="https://oxide.computer/blog/rfd-1-requests-for-discussion/">Oxide Computer Company: RFD 1 Requests for Discussion</a> by Jessica Frazelle</li>
+</ul>
+<hr>
+<h2>Appendix: Example Design Doc Template</h2>
+<p><strong>Note for reviewers</strong></p>
+<p>While reviewing this proposal, focus on answering for yourself:</p>
+<p>Does this proposal fit with our engineering principles?</p>
+<p>Are there unexplored concerns with this design, such as reliability or usability issues?</p>
+<p>Could the proposed implementation be made simpler?</p>
+<p>Are there other alternatives to consider?</p>
+<p><strong>Summary</strong></p>
+<p>1-2 sentence summary of the idea, including the expected impact if implemented.</p>
+<p><strong>Background</strong></p>
+<p>The background serves to ground all readers in the same context that you have as an author. You should describe how the problem came to be, why it's worth solving, and whether there were previous attempts to solve it. Assume that the reader is new to this project but not the company.</p>
+<p>Define or add hyperlinks to terms the reader may not yet be familiar with.</p>
+<p><strong>Goals</strong></p>
+<ul>
+<li>A bulleted list of specific goals for this proposal</li>
+<li>How will we know that this proposal has succeeded?</li>
+<li>Include specific, measurable outcomes that can be cited or tracked on a dashboard.</li>
+</ul>
+<p><strong>Non-Goals</strong></p>
+<p>A bulleted list of what is out of scope for this proposal</p>
+<p>Is there something specific that is too difficult to solve at this time?</p>
+<p><strong>Detailed design</strong></p>
+<p>This section constitutes the bulk of the RFC and is typically 1-4 pages long. It should focus on the novel implementation idea and specific corner cases.</p>
+<p><strong>Drawbacks</strong></p>
+<p>There are tradeoffs to choosing any path: this is where you identify them. Why should we not implement this design? Consider costs in additional complexity, training, reliability, and dollars.</p>
+<p><strong>Alternatives Considered</strong></p>
+<p>This is the most critical section of an RFC. It serves as an enumeration of ideas imagined that were determined to be suboptimal.</p>
+<p>This section lets readers know you have done your homework and helps them assess if the solution is sized appropriately.</p>
+<p><strong>Title of Alternative #1</strong></p>
+<p>What other ideas did you consider and discard? What is the impact of not taking this approach?</p>
+
+</article>
+
+
+</body>
+</html>

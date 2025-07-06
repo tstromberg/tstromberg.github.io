@@ -1,0 +1,268 @@
+<p><img src="https://i.snap.as/uzmvIJhe.jpg" alt=""></p>
+<p>Today I will teach you how to roll your own detection of a classic Linux kernel rootkit using shell scripting (for explanation) and osquery (for production).</p>
+<p>Your chance of encountering a Linux kernel rootkit in the wild is slim due to compatibility and distribution challenges, so this explanation is geared toward the most paranoid folks in the audience. For this demonstration, we'll use <a href="https://github.com/reveng007/reveng_rtkit">reveng_rtkit</a> - one of the more modern examples of a Linux rootkit.</p>
+<p>As of February 2023, this reveng_rtkit runs well on Debian, so I used <a href="https://github.com/lima-vm/lima">lima</a> with <code>limactl start template://debian</code> to create my test environment.</p>
+<!--more-->
+<h2>How does one detect a rootkit anyways?</h2>
+<p>The trick to detecting a rootkit is to find cracks in the illusion they present. Most rootkits only hide their presence when probed with a specific syscall, but Linux has <a href="https://filippo.io/linux-syscall-table/">hundreds of syscalls</a> to choose from. Most commonly, Linux rootkits will hide processes or directory entries by overriding <a href="https://man7.org/linux/man-pages/man2/getdents.2.html">getdents(2)</a>, but neglect <a href="https://man7.org/linux/man-pages/man2/stat.2.html">stat(2)</a>. Some rootkits hide file contents by overriding <a href="https://man7.org/linux/man-pages/man2/read.2.html">read(2)</a>, but forget about <a href="https://man7.org/linux/man-pages/man2/mmap.2.html">mmap(2)</a>.</p>
+<h2>Collecting Evidence</h2>
+<p>Collecting the state of a system before and after a malware installation is an easy way to determine what attributes to alert on.</p>
+<p>If you are only concerned about filesystem changes, many methods are available, such as <a href="https://www.sleuthkit.org/">Sleuthkit</a> or <a href="https://github.com/jessek/hashdeep">hashdeep</a>. Fewer choices exist if you are concerned about the larger overall system state.</p>
+<p>Since I work on the [osquery-detection-kit,]((https://github.com/chainguard-dev/osquery-defense-kit project) I’ll use it to collect a subset of system information to a file. osquery-detection-kit does require extremely recent versions of Go and osquery to be installed, so here's how I installed the dependencies:</p>
+<pre><code class="language-shell">arch=$(uname -m | sed -e s/x86_64/amd64/g -e s/aarch64/arm64/g)
+curl -L https://go.dev/dl/go1.20.1.linux-${arch}.tar.gz | sudo tar -C /usr/local -zxvf -
+curl -LO https://pkg.osquery.io/deb/osquery_5.7.0-1.linux_${arch}.deb
+sudo dpkg -i osquery_5.7.0-1.linux_${arch}.deb
+export PATH=/usr/local/go/bin:$PATH
+</code></pre>
+<p>Here's how I collected the data:</p>
+<pre><code class="language-shell">git clone https://github.com/chainguard-dev/osquery-defense-kit
+cd osquery-defense-kit
+git pull
+make collection
+</code></pre>
+<p>This will populate a subfolder named <code>out/</code> with evidence, so that we may compare against it later.</p>
+<h2>Installing The Rootkit</h2>
+<p>I followed the instructions on <a href="https://github.com/reveng007/reveng_rtkit">https://github.com/reveng007/reveng_rtkit</a> to install the rootkit. Here's how I loaded it:</p>
+<pre><code class="language-shell">sudo insmod reveng_rtkit.ko
+</code></pre>
+<p>Afterward, <code>sudo dmesg</code> shows:</p>
+<pre><code class="language-log">[  382.584069] [+] reveng_rtkit: Created by @reveng007(Soumyanil)
+[  382.584070] [+] reveng_rtkit: Loaded
+[  382.584071] [*] reveng_rtkit: Hiding our rootkit LKM from `lsmod` cmd, `/proc/modules` file path and `/proc/kallsyms` file path
+</code></pre>
+<h2>Finding System State Differences</h2>
+<p>Now I'm able to collect system state once again and diff the two:</p>
+<pre><code class="language-shell">cd $HOME/osquery-defense-kit
+make collect
+diff -ubR ./out/&lt;old&gt; ./out/&lt;new&gt;
+</code></pre>
+<p>The first thing that stood out was that one of the sysctl's changed:</p>
+<pre><code class="language-diff">-config_value: current_value:0 name:kernel.tainted oid: subsystem:kernel type:string
++config_value: current_value:12288 name:kernel.tainted oid: subsystem:kernel type:string
+</code></pre>
+<p>The rootkit uses <code>kill -31</code> to hide processes, so I used <code>kill -31 $$</code> to hide my shell process, ran the collection, and ... found no further differences. This means I'm going to have to improve our detection scripts.</p>
+<p>For testing, I also started a <code>sleep 7200 &amp;</code> process in the background from the hidden shell. This rootkit also hid this subprocess - not all are so consistent.</p>
+<h2>Detecting hidden pids</h2>
+<p>Kernel rootkits tend to do two things with varying levels of success: hide their kernel module, and hide a process ID. revenge_rtkit does this by hiding getdents() calls to /proc, but if you know the hidden process ID, you can stat it directly. Ironically, this is also how Linux hides lightweight threads from users.</p>
+<p>For most of Linux's life, the maximum number of pids on a system was 32768, a relatively small area to stat. Most modern Linux distros have bumped this number up, so this process is going to be slow. To check your system's maximum pid number, run <code>cat /proc/sys/kernel/pid_max</code>.</p>
+<p>Here's a shell script that iterates through all possible pid numbers, revealing any that were not found when listing /proc: [<a href="https://github.com/tstromberg/sunlight/blob/main/hidden-pids.sh">full source</a>]</p>
+<pre><code class="language-shell">[[ $EUID != 0 ]] &amp;&amp; echo &quot;* WARNING: For accurate output, run $0 as uid 0&quot;
+
+declare -A visible
+cd /proc || exit
+
+start=$(date +%s)
+for pid in *; do
+    visible[$pid]=1
+done
+
+for i in $(seq 2 &quot;$(cat /proc/sys/kernel/pid_max)&quot;); do
+    [[ ${visible[$i]} = 1 ]] &amp;&amp; continue
+    [[ ! -e /proc/$i/status ]] &amp;&amp; continue
+    [[ $(stat -c %Z /proc/$i) -ge $start ]] &amp;&amp; continue
+
+    #  pid is a kernel thread
+    [[ $(awk '/Tgid/{ print $2 }' &quot;/proc/${i}/status&quot;) != &quot;${i}&quot; ]] &amp;&amp; continue
+
+    exe=$(readlink &quot;/proc/$i/exe&quot;)
+    cmdline=$(tr '\000' ' ' &lt;&quot;/proc/$i/cmdline&quot;)
+    echo &quot;- hidden $(cat /proc/$i/comm)[${i}] is running ${exe}: ${cmdline}&quot;
+done
+</code></pre>
+<p>Here's the output of this script:</p>
+<pre><code class="language-log">- hidden bash[1924] is running /usr/bin/bash: /bin/bash --login
+- hidden sleep[18518] is running /usr/bin/sleep: sleep 7200
+</code></pre>
+<p>To use roughly the same logic with osquery, use the following within <code>sudo osqueryi</code> [<a href="https://github.com/chainguard-dev/osquery-defense-kit/blob/main/detection/evasion/pid-hidden-by-rootkit.sql">full source</a>]:</p>
+<pre><code class="language-sql">WITH RECURSIVE cnt(x) AS (
+   SELECT 1
+   UNION ALL
+   SELECT x + 1
+   FROM cnt
+   LIMIT 4194304
+)
+SELECT p.*
+FROM cnt
+   JOIN processes p ON x = p.pid
+WHERE x NOT IN (
+       SELECT pid
+       FROM processes
+)
+AND p.start_time &lt; (strftime('%s', 'now') - 1)
+AND (
+       p.pgroup = p.pid
+       OR (
+           p.pid = p.parent
+           AND p.threads = 1
+       )
+)
+</code></pre>
+<h2>Detecting unusual kernel taints</h2>
+<p>Earlier we talked about the value of <code>sysctl kernel.tainted</code> changing from 0 to 12288. Let's use the following script  to diagnose it [<a href="https://github.com/tstromberg/sunlight/blob/main/kernel-taint.sh">full source</a>]:</p>
+<pre><code class="language-shell">declare -A table=(
+    [0]=&quot;proprietary module was loaded&quot;
+    [1]=&quot;module was force loaded&quot;
+    [2]=&quot;kernel running on an out of specification system&quot;
+    [3]=&quot;module was force unloaded&quot;
+    [4]=&quot;processor reported a Machine Check Exception (MCE)&quot;
+    [5]=&quot;bad page referenced or some unexpected page flags&quot;
+    [6]=&quot;taint requested by userspace application&quot;
+    [7]=&quot;kernel died recently, i.e. there was an OOPS or BUG&quot;
+    [8]=&quot;ACPI table overridden by user&quot;
+    [9]=&quot;kernel issued warning&quot;
+    [10]=&quot;staging driver was loaded&quot;
+    [11]=&quot;workaround for bug in platform firmware applied&quot;
+    [12]=&quot;externally-built (out-of-tree) module was loaded&quot;
+    [13]=&quot;unsigned module was loaded&quot;
+    [14]=&quot;soft lockup occurred&quot;
+    [15]=&quot;kernel has been live patched&quot;
+    [16]=&quot;auxiliary taint, defined for and used by distros&quot;
+    [17]=&quot;kernel was built with the struct randomization plugin&quot;
+    [18]=&quot;an in-kernel test has been run&quot;
+)
+
+
+taint=$(cat /proc/sys/kernel/tainted)
+[[ $taint == 0 ]] &amp;&amp; exit
+
+echo &quot;kernel taint value: ${taint}&quot;
+for i in $(seq 18); do
+    bit=$(($i-1))
+    match=$(($taint &gt;&gt; $bit &amp;1))
+    [[ $match == 0 ]] &amp;&amp; continue
+    echo &quot;* matches bit $bit: ${table[$bit]}&quot;
+done
+
+echo &quot;&quot;
+echo &quot;dmesg:&quot;
+dmesg | grep taint
+</code></pre>
+<p>Here's the output of that script when this rootkit is loaded:</p>
+<pre><code class="language-log">kernel taint value: 12288
+* matches bit 12: externally-built (out-of-tree) module was loaded
+* matches bit 13: unsigned module was loaded
+
+dmesg:
+[  368.765518] reveng_rtkit: loading out-of-tree module taints kernel.
+[  368.777600] reveng_rtkit: module verification failed: signature and/or required key missing - tainting kernel
+</code></pre>
+<p>Here's the osquery query I generated for alerting on this kind of taint [<a href="https://github.com/chainguard-dev/osquery-defense-kit/blob/main/detection/evasion/unusually-tainted-kernel-linux.sql">full source</a>]:</p>
+<pre><code class="language-sql">SELECT current_value AS value,
+    current_value &amp; 65536 AS is_aux,
+    current_value &amp; 8192 is_unsigned,
+    current_value &amp; 4096 AS out_of_tree,
+    current_value &amp; 512 AS kernel_warning,
+    current_value &amp; 614 AS requested_by_userspace,
+    current_value &amp; 8 AS force_unloaded,
+    current_value &amp; 4 AS out_of_spec,
+    current_value &amp; 2 AS force_loaded,
+    current_value &amp; 1 AS proprietary
+FROM system_controls
+WHERE name = &quot;kernel.tainted&quot;
+    AND current_value NOT IN (0, 512, 12289, 4097)
+</code></pre>
+<h2>Detecting unusual /dev entries</h2>
+<p>We noted an unusual device earlier, which is used to communicate to the rootkit:</p>
+<pre><code class="language-shell">crw-------  1 root root 247,   0 Feb 23 15:53 etx_device
+</code></pre>
+<p>The &quot;247&quot; in the output there is the major device number, which generally maps to a kernel module. To find unexpected devices like this, you can either whitelist expected device names, or expected major numbers. We'll do it both ways here.</p>
+<p>To use major number logic, you'll want to refer to <a href="https://www.kernel.org/doc/Documentation/admin-guide/devices.txt">https://www.kernel.org/doc/Documentation/admin-guide/devices.txt</a>. Armed with this information, there are two data sources to check, /proc/devices, and /dev. The first one is interesting, as it's a map of major numbers to drivers:</p>
+<pre><code class="language-shell">Character devices:
+  1 mem
+  4 /dev/vc/0
+  4 tty
+…
+189 usb_device
+226 drm
+247 etx_Dev
+248 aux
+</code></pre>
+<p>One major flaw in my plan is that there are sections of dynamically generated major numbers, for instance, our suspicious 247 major device lands squarely in this section:</p>
+<pre><code class="language-log">240-254 block LOCAL/EXPERIMENTAL USE
+</code></pre>
+<p>So, I went with a hybrid approach to discover devices that are commonly found on UNIX systems, by major number when possible, and the device name when it's dynamic [<a href="https://github.com/tstromberg/sunlight/blob/main/kernel-taint.sh">full source</a>]:</p>
+<pre><code class="language-shell">
+declare -A expected_major=(
+    [1]=&quot;memory&quot;
+    [2]=&quot;pty master&quot;
+    [3]=&quot;pty slave&quot;
+    [4]=&quot;tty&quot;
+    [5]=&quot;alt tty&quot;
+    [6]=&quot;parallel&quot;
+    [7]=&quot;vcs&quot;
+    # [8]=&quot;scsi tape&quot;
+    [9]=&quot;md&quot;
+    [10]=&quot;misc&quot;
+    [13]=&quot;input&quot;
+    [21]=&quot;scsi&quot;
+    [29]=&quot;fb&quot;
+...
+)
+
+declare -A expected_low=(
+    [&quot;bsg/&quot;]=1
+    [&quot;dma_heap/system&quot;]=1
+...
+)
+
+declare -A expected_high=(
+    [&quot;drm_dp_aux&quot;]=1
+    [&quot;iiodevice&quot;]=1
+)
+
+for path in $(find /dev -type c); do
+    hex=$(stat -c '%t' $path)
+    major=$(( 16#${hex} ))
+    pattern=$(echo $path | cut -d/ -f3- | tr -d '[:0-9]')
+
+    # Unix98 PTY Slaves
+    (( major &gt;= 136 &amp;&amp; major &lt;= 143 )) &amp;&amp; continue
+    [[ ${expected_major[$major]} != &quot;&quot; ]] &amp;&amp; continue
+
+    class=&quot;UNKNOWN&quot;
+    (( major &gt;= 60 &amp;&amp; major &lt;= 63 )) &amp;&amp; class=&quot;LOCAL/EXPERIMENTAL&quot;
+    (( major &gt;= 120 &amp;&amp; major &lt;= 127 )) &amp;&amp; class=&quot;LOCAL/EXPERIMENTAL&quot;
+    if (( major &gt;= 234 &amp;&amp; major &lt;= 254 )); then
+        class=&quot;low dynamic&quot;
+        [[ ${expected_low[$pattern]} == 1 ]] &amp;&amp; continue
+    fi
+
+    if (( major &gt;= 384 &amp;&amp; major &lt;= 511 )); then
+        class=&quot;high dynamic&quot;
+        [[ ${expected_high[$pattern]} == 1 ]] &amp;&amp; continue
+    fi
+
+    echo &quot;${class} major device ${pattern}[${major}]&quot;
+    echo &quot;* $(ls -lad $path)&quot;
+    echo &quot;* /proc/devices: $(sed -n '/Block devices:/q;p' /proc/devices | grep -e &quot;^ *${major}&quot;)&quot;
+    echo &quot;&quot;
+done
+</code></pre>
+<p>Here is the output of this script on a system with reveng_rtkit installed:</p>
+<pre><code class="language-shell">low dynamic major device etx_device[247]
+* crw------- 1 root root 247, 0 Mar  3 19:48 /dev/etx_device
+* /proc/devices: 247 etx_Dev
+</code></pre>
+<p>In osquery, there is no reliable way to determine a major number, as it depends on a local magic database. There we'll rely on a simple whitelist of device names [<a href="https://github.com/chainguard-dev/osquery-defense-kit/blob/main/detection/persistence/unexpected-device.sql">full source</a>]:</p>
+<pre><code class="language-sql">SELECT *
+FROM
+ file
+WHERE
+ (
+   path LIKE '/dev/%'
+   OR directory LIKE '/dev/%'
+ )
+ AND path_expr NOT IN (
+   '/dev/acpi_thermal_rel',
+   '/dev/autofs',
+   '/dev/block/',
+   '/dev/block/:',
+   '/dev/bsg/',
+   '/dev/bsg/:::',
+…
+)
+</code></pre>
+<h2>In Closing</h2>
+<p>In a future episode, we'll explore what it takes to detect an eBPF rootkit. The general philosophy is the same: know what to expect from your system and detect half-hearted illusions. I hope you enjoyed this article!</p>
+<p>If you have questions, find me at <a href="https://triangletoot.party/@thomrstrom" title="triangletoot.party/@thomrstrom">@tstromberg.</a></p>

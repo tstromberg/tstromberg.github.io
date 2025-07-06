@@ -1,0 +1,152 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skene Lights Installation on the BMW CE-04 | choosehappy.dev</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="alternate" type="application/atom+xml" title="choosehappy.dev RSS Feed" href="/feed.xml">
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-left">
+        <div class="site-title">☀️ <a href="/">choosehappy.dev</a></div>
+        <div class="site-desc">thomas strömberg's happy little corner of the internet.</div>
+      </div>
+      <ul class="nav-right">
+        <li><a href="/posts">posts</a></li>
+        <li><a href="https://www.linkedin.com/in/thomas-str%C3%B6mberg-9977261/">linkedin</a></li>
+        <li><a href="https://triangletoot.party/@thomrstrom">mastodon</a></li>
+        <li><a href="/feed.xml" title="RSS Feed">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3.429 14.25c1.04 0 1.92.35 2.64 1.05.72.7 1.08 1.58 1.08 2.64 0 1.04-.36 1.92-1.08 2.64-.72.72-1.6 1.08-2.64 1.08-1.06 0-1.94-.36-2.64-1.08-.7-.72-1.05-1.6-1.05-2.64 0-1.06.35-1.94 1.05-2.64.7-.7 1.58-1.05 2.64-1.05zm0-4.5c2.32 0 4.42.87 6.3 2.61 1.88 1.74 2.82 3.9 2.82 6.48h-3.15c0-1.64-.6-3.05-1.8-4.23-1.2-1.18-2.62-1.77-4.26-1.77V9.75zm0-4.5c3.71 0 6.9 1.35 9.57 4.05 2.67 2.7 4.01 5.94 4.01 9.72h-3.15c0-2.88-1.05-5.37-3.15-7.47-2.1-2.1-4.59-3.15-7.47-3.15V5.25z"/>
+          </svg>
+        </a></li>
+      </ul>
+    </nav>
+  </header>
+
+  
+<article>
+  <h1>Skene Lights Installation on the BMW CE-04</h1>
+  <div class="post-meta">
+    <p>Published on June 13, 2023</p>
+  </div>
+  <p>Before allowing my kids to ride on the back of my BMW CE 04, I wanted to drastically improve its visibility. It turns out that there is a company that specializes in doing just that: <a href="https://skenelights.com/">skenelights.com</a></p>
+<p>The lights they sell have a unique conspicuity filter, which uses the motion-detecting characteristics of human vision to enhance visibility. It's difficult to accurately capture the appearance with a cell phone camera due to the rolling shutter, but this is what it looks like before sunset and at night:</p>
+<p>https://youtu.be/1ggsJFvgzgc</p>
+<!--more-->
+<p>These lights can also work as an extra set of blinkers, and in the case of the rear lights, they will also light up if I hit the brakes or through deceleration if I even just let off the throttle.</p>
+<p>The biggest problem with installing 3rd party lights is knowing how and where to plug them in. As BMW has chosen not to publish an electrical diagram, it took me a full day to figure it out. This was my first time using Posi-Tap connectors, which was easier than I thought: after watching a <a href="https://www.youtube.com/watch?v=5v0Sv1LVMo4">Posi-Tap install video</a>, I only had one wire that required multiple taps: the 12V+ lead on the license plate light.</p>
+<p>This guide is meant to capitalize on my misery and for your use as a time-saving CE-04-specific supplement to the <a href="https://skenelights.com/support.html">official Skene installation guides</a>. Now, let’s go take things apart!</p>
+<p><img src="https://i.snap.as/ucmfIMdD.jpg" alt=""></p>
+<hr>
+<h2>Photon Blaster-TS Front Lights Installation</h2>
+<ul>
+<li><strong>Time</strong>: 2 hours if this is your first time installing lights</li>
+<li><strong>Tools</strong>: T30 wrench, T25 wrench</li>
+<li><strong>Suggested wiring:</strong>
+<ul>
+<li>Switched +12V -&gt; Green alarm wire</li>
+<li>Ground -&gt; Brown alarm wire</li>
+<li>Left Turn Signal -&gt; Red left turn signal wire</li>
+<li>Right Turn Signal -&gt; Red right turn signal wire</li>
+</ul>
+</li>
+</ul>
+<h3>1. Remove the front panel</h3>
+<p>The front panel on the CE-04 slides down - no tools required.</p>
+<p><img src="https://i.snap.as/7hYeyHHs.jpg" alt=""></p>
+<p>Underneath this panel are the headlight adjusters, an emergency T25 wrench, and an ODB-II port.</p>
+<h3>2. Remove the windscreen.</h3>
+<p>This is held by 4 T25 screws. If you have the high windscreen, you may have more screws than this, but you only need to remove the bottom 4 for this project.</p>
+<h3>3. Remove the relay and indicator panel</h3>
+<p>There are 4 T30 screws underneath the windscreen and behind the display.</p>
+<p><img src="https://i.snap.as/JT537emH.jpg" alt=""></p>
+<p>Once unscrewed, you can access all the wires you need to install auxiliary lights for the BMW CE 04. First, we are going to use the alarm for 12V switched power and ground - highlighted below:</p>
+<p><img src="https://i.snap.as/rEZK5Kxj.jpg" alt=""></p>
+<h3>4. Tap the alarm connector</h3>
+<p>I don't have an alarm, so my scooter came with this 120-ohm resistor (BMW part 7668405 01) installed. Either way, the idea is the same: install the larger blue Posi-Tap's on the brown (ground) and green (12V switched power) wires.</p>
+<p><img src="https://i.snap.as/rRDvVdux.jpg" alt=""></p>
+<p>Once you've done that, connect the wires up to your Photon Blasters and power up the CE 04 to confirm basic operations:</p>
+<p><img src="https://i.snap.as/2v8k8JR6.jpg" alt=""></p>
+<p>If your taps were successful, the lights should now work when you turn your scooter on. If not, check that you successfully pierced the cable, as it is easy to miss the center of the plug you are tapping into - DAMHIK.</p>
+<h3>5. Tap the turn signals</h3>
+<p>If you have the turn-signal variety of the Photon Blasters (-TS suffix), tap into the red wires on the turn signal cables too. Thankfully they are straightforward to access:</p>
+<p><img src="https://i.snap.as/eP43KGBJ.jpg" alt=""></p>
+<h3>6. Secure the controller</h3>
+<p>Try your turn signals, and if they work, you can move on to placing the velcro for the controller on the flat area between the alarm and the screen:</p>
+<p><img src="https://i.snap.as/N04Wc3lh.jpg" alt=""></p>
+<h3>7. Route the LED cables</h3>
+<p>Before you clean up your cable mess, I suggest screwing the Skene lights into their eventual home at the bottom of the wheels. You can drape them across the front of the fairing on either side. I experimented with several ideas, such as removing the panels and using the gaps between them, but in the end, I went with a simple approach (no additional unscrewing required):</p>
+<p><img src="https://i.snap.as/SE963ky0.jpg" alt=""></p>
+<p>The installation guide suggests a drip loop so water does not drip down the cable and into the lights.</p>
+<p><img src="https://i.snap.as/N96XQQ0V.jpg" alt=""></p>
+<p>I found that introducing this bend into the cable revealed wires on the right side light, so I added some reinforcement electrical tape to protect it:</p>
+<p><img src="https://i.snap.as/n1kKL9fj.jpg" alt=""></p>
+<p>I routed the cable up the fork protector and added a zip tie to the fork boots to make sure that the cable didn't pop out from behind the protector:</p>
+<p><img src="https://i.snap.as/k2H9Zz5t.jpg" alt=""></p>
+<p>Now get the bike on the center stand, and push the wheel full lock in either direction to ensure that the wires are not run so tightly that they interfere with steering.</p>
+<p><img src="https://i.snap.as/NSxFDObr.jpg" alt=""></p>
+<h3>8. Clean up</h3>
+<p>Then go ahead and wrap all of your connectors with electrical tape and use every twist tie you can to make things look nice. Here is what things looked like under the hood for me before I put the panels back on:</p>
+<p><img src="https://i.snap.as/qhqYV6JO.jpg" alt=""></p>
+<p>I was able to hide all of the wires beneath the turn signal panel so that you couldn't even tell that evil things had been done below:</p>
+<p><img src="https://i.snap.as/FqBiZ46x.jpg" alt=""></p>
+<p>Now slide the front panel back into place, put the screen on, and level out the LEDs. If your lights aren't pulsing, you may need to enable the conspicuity mode - see the manual for programming notes.</p>
+<hr>
+<h2>P3 Rear Lights (IQ-260 Series) Installation</h2>
+<ul>
+<li><strong>Time</strong>: 2 hours</li>
+<li><strong>Tools</strong>: T25 wrench, multi-tool, scissors</li>
+<li><strong>Suggested wiring:</strong>
+<ul>
+<li>Switched +12V -&gt; white/grey wire to the license plate light</li>
+<li>Ground -&gt; brown wire to the license plate light</li>
+<li>Left Turn Signal -&gt; white wire to the indicator cluster</li>
+<li>Right Turn Signal -&gt; blue/green wire to the indicator cluster</li>
+<li>Brake - one of the two lavender/red wires to the indicator cluster</li>
+</ul>
+</li>
+</ul>
+<p>On the CE-04, the rear lights are more challenging to install than the front lights. Having removed the rear wheel before to replace a broken indicator light, I opted to write up installation instructions that do not require wheel removal - even if doing so does provide a slightly cleaner install.</p>
+<h3>1. Remove panels</h3>
+<p>First, remove the 3 T25 bolts holding the belt cover. The arrow points to where we will be tapping the wires:</p>
+<p><img src="https://i.snap.as/XIqfSeOt.jpg" alt=""></p>
+<p>Remove the white panels on both sides for more room - both have one T25 bolt to remove before you can pull them out.</p>
+<p><img src="https://i.snap.as/luEZFie5.jpg" alt=""></p>
+<h3>2. Tap the power leads</h3>
+<p>You will need to strip the fabric from two cables: the 2-wire license plate light cable with a quick connector and a 6-wire indicator cluster cable. I suggest carefully removing the license plate light cable using the quick connector and a small flat-head screwdriver for easier access.</p>
+<p><img src="https://i.snap.as/atm4pXNX.jpg" alt=""></p>
+<p>If you end up breaking the safety latch on it, no big deal - I broke mine on the second go around. Once detected, install PosiTaps on these two wires for the ground (brown) and 12V switched power (silver/black).</p>
+<p>Once you do this, perform a power-on test of the lights.</p>
+<h3>3. Tap the signal leads</h3>
+<p>The 6-wire indicator cluster cable is behind the license plate light and is slightly more difficult to unwrap. I used a small pocket knife and pair of scissors to cut into the section where the thick translucent plastic protector part ends, careful not to cut into the wires:</p>
+<p><img src="https://i.snap.as/NScDC402.jpg" alt=""></p>
+<p>You'll need to install Posi-Taps onto the white wire (left turn signal), blue/green wire (right turn signal), and one of the lavender/red wires (brake). The result looks somewhat like a rainbow snake exploded:</p>
+<p><img src="https://i.snap.as/trQeMOuO.jpg" alt=""></p>
+<h3>4. Wrap the taps</h3>
+<p>I wrapped the cables up in electrical tape (I regret using purple), and then removed the back panel (T25 screws) to cleverly hide the tapped cables and route the controller to its final resting space above the 12V battery.</p>
+<p><img src="https://i.snap.as/hfi5eK6M.jpg" alt=""></p>
+<h3>5. Secure the controller</h3>
+<p>I could have hidden the controller below, but since I had the decelerometer version, I needed a level surface, so I chose the space just above the 12V battery.</p>
+<p><img src="https://i.snap.as/bxOyzqIY.jpg" alt=""></p>
+<p>As the manual suggested, I installed a zip tie to the cables, and then I used some duct tape to keep it from rattling around.</p>
+<h3>6. Route the LED cables</h3>
+<p>Once I knew how long I needed the wires to run, I installed the rear lights, running the wires beneath the swing arm until they could join the standard indicator wires. If you remove the rear wheel, you can instead access the small channel underneath the plastic:</p>
+<p><img src="https://i.snap.as/Cw1UQhrn.jpg" alt=""></p>
+<p>Once you put humpty dumpty back together again, it will look something like this:</p>
+<p><img src="https://i.snap.as/MiJEmDhk.jpg" alt=""></p>
+<p>While I don’t love the visible tie wraps on the mudguard holder, I also don’t love removing and reinstalling the rear wheel.</p>
+<p>I suspect I could have likely gotten a cleaner install by tapping closer to the fuse blocks, but I was trying to stay out of the high-voltage area of the bike.</p>
+<hr>
+<h2>In Closing</h2>
+<p>The Skene lights were a pain to install but well worth the added visibility. If I was to criticize anything, it'd be the wire boot on the Photon Blaster LED lights and the fact that when the turn signal is on, both the Photon Blasters will display an alternate flashing pattern.</p>
+
+</article>
+
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detecting the Lottie supply-chain attack with malcontent | choosehappy.dev</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="alternate" type="application/atom+xml" title="choosehappy.dev RSS Feed" href="/feed.xml">
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-left">
+        <div class="site-title">☀️ <a href="/">choosehappy.dev</a></div>
+        <div class="site-desc">thomas strömberg's happy little corner of the internet.</div>
+      </div>
+      <ul class="nav-right">
+        <li><a href="/posts">posts</a></li>
+        <li><a href="https://www.linkedin.com/in/thomas-str%C3%B6mberg-9977261/">linkedin</a></li>
+        <li><a href="https://triangletoot.party/@thomrstrom">mastodon</a></li>
+        <li><a href="/feed.xml" title="RSS Feed">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3.429 14.25c1.04 0 1.92.35 2.64 1.05.72.7 1.08 1.58 1.08 2.64 0 1.04-.36 1.92-1.08 2.64-.72.72-1.6 1.08-2.64 1.08-1.06 0-1.94-.36-2.64-1.08-.7-.72-1.05-1.6-1.05-2.64 0-1.06.35-1.94 1.05-2.64.7-.7 1.58-1.05 2.64-1.05zm0-4.5c2.32 0 4.42.87 6.3 2.61 1.88 1.74 2.82 3.9 2.82 6.48h-3.15c0-1.64-.6-3.05-1.8-4.23-1.2-1.18-2.62-1.77-4.26-1.77V9.75zm0-4.5c3.71 0 6.9 1.35 9.57 4.05 2.67 2.7 4.01 5.94 4.01 9.72h-3.15c0-2.88-1.05-5.37-3.15-7.47-2.1-2.1-4.59-3.15-7.47-3.15V5.25z"/>
+          </svg>
+        </a></li>
+      </ul>
+    </nav>
+  </header>
+
+  
+<article>
+  <h1>Detecting the Lottie supply-chain attack with malcontent</h1>
+  <div class="post-meta">
+    <p>Published on October 31, 2024</p>
+  </div>
+  <p>Some of you may have heard that there was <a href="https://github.com/LottieFiles/lottie-player/issues/254">another supply-chain attack against an open-source project yesterday</a> - this time in a Javascript library called <a href="https://lottiefiles.com/web-player">Lottie Web Player.</a></p>
+<p>I have yet to talk much about it, but earlier this year I started an open-source project named <a href="https://github.com/chainguard-dev/malcontent">malcontent</a> that detects precisely this kind of attack: malicious changes in open-source software. This is very relevant to my day job at <a href="https://www.chainguard.dev/">Chainguard</a>.</p>
+<p>malcontent summarizes the risks and capabilities of a file and alerts when a new version substantially changes those risks and capabilities. It's easier to show you with a screenshot:</p>
+<p><img src="https://i.snap.as/4ywoSN73.png" alt=""></p>
+<p>In a nutshell:  <code>mal diff</code> calculated that the risk of file went from MEDIUM to CRITICAL between two revisions. In doing so, it surfaced a number of new behaviors that would catch the eye of a code reviewer. The idea here is that no tool will be able to give you a 100% reliable answer to “Is it malicious or not?” but as a code reviewer, you have the context of what functionality changes are reasonable to you for the library you are consuming.</p>
+<p><a href="https://github.com/chainguard-dev/malcontent">malcontent</a> works on any file you might encounter in open source, from shell scripts to Linux ELF binaries to macOS machO binaries and PHP. While we’ve incorporated over 15,000 <a href="https://yara.readthedocs.io/en/stable/index.html">YARA rules</a>, we're far from the same quality level as VirusTotal; so if you are handy in YARA or <a href="https://go.dev/">Go</a> or would like to learn more about them, PRs are welcome!</p>
+<p>PS - malcontent can also be used as a basic malware scanner - but it isn’t yet as impressive as the “diff” mode:  <code>mal scan /path</code></p>
+
+</article>
+
+
+</body>
+</html>
