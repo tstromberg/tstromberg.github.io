@@ -9,7 +9,7 @@ The best engineering happens when developers can stay in flow state, but most ge
 
 During my time at Google and Chainguard, I built tools like **Triage Party** and **malcontent** that started from "this should be easier" moments. But the breakthrough came when I realized the real bottleneck wasn't technical complexity—it was human. Talented developers were burning out not from hard problems, but from collaborative friction in modern software development.
 
-That realization led me to found **codeGROOVE**, where we're building tools that respect developer craftsmanship instead of fighting against it. On a long enough timescale, open-source always wins, which is why we're focused on making the collaborative aspects of software development fundamentally better.
+That realization led me to found **codeGROOVE**, where we're building tools that respect developer craftsmanship instead of fighting against it. On a long enough timescale, open-source always wins, which is why we're focused on making the collaborative aspects of open-source software development better.
 
 This systems thinking approach works everywhere. Whether I'm carving custom bamboo bicycle frames (spoiler: you probably shouldn't), exploring North Carolina backroads on my electric motorcycle, or debugging complex distributed systems, it's all about understanding how things work, taking them apart, and reassembling them for the better.
 
