@@ -7,7 +7,7 @@ The best engineering happens when developers can stay in flow state, but most ge
 
 ![Thomas Strömberg](/img/me.jpg)
 
-During my time at Google (Kubernetes, Cluster Automation) and Chainguard (supply-chain security), I built tools like **minikube** and **malcontent** that started from "this should be easier" moments. But the breakthrough came when I realized the real bottleneck wasn't technical complexity—it was human. Talented developers were burning out not from hard problems, but from collaborative friction in modern software development.
+During my time at Google and Chainguard, I built tools like **Triage Party** and **malcontent** that started from "this should be easier" moments. But the breakthrough came when I realized the real bottleneck wasn't technical complexity—it was human. Talented developers were burning out not from hard problems, but from collaborative friction in modern software development.
 
 That realization led me to found **codeGROOVE**, where we're building tools that respect developer craftsmanship instead of fighting against it. On a long enough timescale, open-source always wins, which is why we're focused on making the collaborative aspects of software development fundamentally better.
 
