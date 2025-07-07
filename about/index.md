@@ -3,7 +3,7 @@ layout: base.njk
 title: About Thomas Strömberg
 ---
 
-I solve problems by understanding how systems work, then making them better. My medium is usually software, but the approach is the same whether I'm debugging a Kubernetes cluster or hand-carving a bamboo bicycle frame.
+I solve problems by understanding how complex systems work, taking them apart, and reassembling them for the better. My medium is usually software, but the approach is the same whether I'm debugging a failing kernel module or a home-made bamboo bicycle frame.
 
 ![Thomas Strömberg](/img/me.jpg)
 
