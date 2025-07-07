@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Using LLMs to do the dirty work of blog migration | choosehappy.dev</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="alternate" type="application/atom+xml" title="choosehappy.dev RSS Feed" href="/feed.xml">
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-left">
+        <div class="site-title">☀️ <a href="/">choosehappy.dev</a></div>
+        <div class="site-desc">thomas strömberg's happy little corner of the internet.</div>
+      </div>
+      <ul class="nav-right">
+        <li><a href="/posts">posts</a></li>
+        <li><a href="https://www.linkedin.com/in/thomas-str%C3%B6mberg-9977261/">linkedin</a></li>
+        <li><a href="https://triangletoot.party/@thomrstrom">mastodon</a></li>
+        <li><a href="/feed.xml" title="RSS Feed">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3.429 14.25c1.04 0 1.92.35 2.64 1.05.72.7 1.08 1.58 1.08 2.64 0 1.04-.36 1.92-1.08 2.64-.72.72-1.6 1.08-2.64 1.08-1.06 0-1.94-.36-2.64-1.08-.7-.72-1.05-1.6-1.05-2.64 0-1.06.35-1.94 1.05-2.64.7-.7 1.58-1.05 2.64-1.05zm0-4.5c2.32 0 4.42.87 6.3 2.61 1.88 1.74 2.82 3.9 2.82 6.48h-3.15c0-1.64-.6-3.05-1.8-4.23-1.2-1.18-2.62-1.77-4.26-1.77V9.75zm0-4.5c3.71 0 6.9 1.35 9.57 4.05 2.67 2.7 4.01 5.94 4.01 9.72h-3.15c0-2.88-1.05-5.37-3.15-7.47-2.1-2.1-4.59-3.15-7.47-3.15V5.25z"/>
+          </svg>
+        </a></li>
+      </ul>
+    </nav>
+  </header>
+
+  
+<article>
+  <h1>Using LLMs to do the dirty work of blog migration</h1>
+  <div class="post-meta">
+    <p>Published on July 6, 2025</p>
+  </div>
+  <p>After years of content scattered across three different sites, I finally got tired of deciding where to publish things. My old Hugo blog at libthom.so had the technical posts, unfinished.bike on write.as had the motorcycle adventures, and stromberg.org/t held random static HTML pages I'd crafted by hand. Time to consolidate everything into one Eleventy site.</p>
+<p>There's a classic developer trap: you want to write a blog post, so instead you write a new blog engine. I was about to fall into the modern AI equivalent - getting an LLM to completely rebuild my website rather than just copying the damn files over.</p>
+<p>But sometimes the dirty work is worth automating.</p>
+<h2>The Setup</h2>
+<p>I had three sources to wrangle:</p>
+<ul>
+<li>Hugo markdown files from my old technical blog</li>
+<li>A 324KB JSON export from write.as with 26 posts</li>
+<li>Random static HTML pages I'd hand-crafted over the years</li>
+</ul>
+<p>The plan was simple: one Eleventy site with everything in <code>/posts/</code>, RSS feeds, recent posts on the front page. Standard static site generator stuff.</p>
+<h2>Windsurf: Great until it wasn't</h2>
+<p>I started with Windsurf since I'd heard good things. My prompt was straightforward:</p>
+<blockquote>
+Create a personal website using 11eventy that incorporates all of the data in the import directory: my old hugo blog, my current personal website, and my write.as posts in JSON format. Blog posts should exist within a /posts/ subdirectory and support RSS feeds.
+</blockquote>
+<p>Credit where it's due: Windsurf's tab completion while editing markdown was fantastic. The writing experience felt smooth, and it created a decent &quot;about&quot; page without issues.</p>
+<p>But then came <code>npm install</code>.</p>
+<p>It just hung. Not slow - completely stuck. When I killed it and tried <code>npm run build</code>, same thing. Windsurf couldn't recover or suggest workarounds when the tooling hiccupped. It was like watching someone brilliant freeze up the moment something unexpected happened.</p>
+<h2>Claude Code: Better at grinding through problems</h2>
+<p>Frustrated, I switched to Claude Code. Looking at my <code>.claude.json</code> history, I can see the real story - dozens of iterations to get things working.</p>
+<h3>Content conversion was a mess</h3>
+<p>Claude Code had a surprisingly difficult time reasoning about whether content was HTML or markdown. It would convert things that were already markdown, or miss HTML that needed conversion. I spent multiple rounds explaining &quot;this file is already markdown, don't touch it&quot; and &quot;that HTML div needs to become markdown.&quot;</p>
+<h3>Styling took forever</h3>
+<p>Getting a decent-looking website required many iterations. The initial results looked like a CSS tutorial from 2005. Each round of &quot;make this look less terrible&quot; produced small improvements, but it was slow going.</p>
+<p>Sample progression:</p>
+<ul>
+<li>First attempt: Times New Roman, no spacing, broken layout</li>
+<li>After 10 iterations: Basic styling, readable but ugly</li>
+<li>After 20 iterations: Actually presentable</li>
+</ul>
+<h3>GitHub Pages deployment went surprisingly well</h3>
+<p>This was the one area that worked better than expected. A few iterations to clean up old Hugo workflows and configure Eleventy deployment, and it was done.</p>
+<p>The key difference from Windsurf wasn't brilliance - it was persistence. When something didn't work, Claude Code tried another approach instead of giving up.</p>
+<h2>What LLMs are actually good at</h2>
+<p>After this experience, I have a clearer picture of where LLMs shine and where they struggle:</p>
+<p><strong>Good at:</strong></p>
+<ul>
+<li>Parsing JSON exports and converting to markdown</li>
+<li>Writing migration scripts for bulk operations</li>
+<li>Iterating on configuration files until they work</li>
+<li>Handling dozens of small format inconsistencies</li>
+<li>Not giving up when the first approach fails</li>
+</ul>
+<p><strong>Bad at:</strong></p>
+<ul>
+<li>Understanding semantic differences between content formats</li>
+<li>Making good design decisions</li>
+<li>Knowing when &quot;good enough&quot; is actually good enough</li>
+<li>Recognizing when they're over-engineering</li>
+</ul>
+<p>The real value wasn't in the LLM being smart - it was having something that could grind through the boring parts while I focused on decisions that actually mattered.</p>
+<h2>The modern developer trap</h2>
+<p>This whole process made me realize we've just upgraded the classic developer trap. Instead of &quot;I'll write a new blog engine,&quot; it's now &quot;I'll get an AI to completely rebuild my site.&quot;</p>
+<p>The temptation is real. Why manually copy content when you can have an LLM parse, convert, and restructure everything? Why settle for your existing design when you can iterate on something new?</p>
+<p>Sometimes it's worth it. My content is now properly organized, consistently formatted, and easier to maintain. But I could have achieved 80% of that benefit by just copying the markdown files and calling it done.</p>
+<h2>The result</h2>
+<p>All my content from three sites now lives in one place. Posts from libthom.so, unfinished.bike, and stromberg.org/t are organized by year, searchable, and available via RSS.</p>
+<p>More importantly, I can publish new stuff without deciding which site deserves it.</p>
+<p>Was it worth the dozens of iterations? Probably. Will I fall into the same trap next time I want to tweak something? Almost certainly.</p>
+<h2>If you're considering this</h2>
+<p>LLMs are great for the grunt work of content migration, but set your expectations:</p>
+<ul>
+<li>Expect many iterations to get styling right</li>
+<li>Be very specific about content formats - they're terrible at guessing</li>
+<li>Set boundaries on how much rebuilding vs. simple migration you'll allow</li>
+<li>Remember that &quot;good enough&quot; exists</li>
+</ul>
+<p>The real lesson isn't about which tool to use. It's about recognizing when you're optimizing the wrong thing - and when that optimization is actually worth doing.</p>
+
+</article>
+
+
+</body>
+</html>
