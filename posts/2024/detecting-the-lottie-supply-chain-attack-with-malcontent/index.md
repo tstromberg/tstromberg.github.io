@@ -8,7 +8,7 @@ I have yet to talk much about it, but earlier this year I started an open-source
 
 malcontent summarizes the risks and capabilities of a file and alerts when a new version substantially changes those risks and capabilities. It's easier to show you with a screenshot:
 
-![](https://i.snap.as/4ywoSN73.png)
+![](4ywoSN73.png)
 
 In a nutshell:  `mal diff` calculated that the risk of file went from MEDIUM to CRITICAL between two revisions. In doing so, it surfaced a number of new behaviors that would catch the eye of a code reviewer. The idea here is that no tool will be able to give you a 100% reliable answer to “Is it malicious or not?” but as a code reviewer, you have the context of what functionality changes are reasonable to you for the library you are consuming.
 

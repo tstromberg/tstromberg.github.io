@@ -6,7 +6,7 @@ I was recently provided a sample of the recently announced [stealthier variant o
 
 I was particularly curious what the bpfdoor surface area looked like, and if it was easy it was to detect using existing open-source tools and common Linux command-line utilities.
 
-![](https://i.snap.as/XIxA7RGD.jpg)
+![](XIxA7RGD.jpg)
 
 To experiment,  I used my favorite VM manager on macOS or Linux for this analysis: [Lima](https://github.com/lima-vm/lima), with the default Ubuntu 22.10 image.
 

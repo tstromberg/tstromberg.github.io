@@ -4,7 +4,7 @@ date: 2023-01-03
 ---
 For years I’ve had New Year’s resolutions to commit to blogging. This year isn’t any different!
 
-![](https://i.snap.as/sCmY18H9.jpg)
+![](sCmY18H9.jpg)
 
 So, what is different? For one, I feel I have more to share with the world now. I recently moved back to North Carolina, took up motorcycling again, and have professionally refocused on computer security.
 

@@ -2,7 +2,7 @@
 title: "The anatomy of a great playbook entry"
 date: 2021-05-21
 ---
-![](https://i.snap.as/H0yXNAle.webp)
+![](H0yXNAle.webp)
 
 What if you could easily reduce the length of outages by 3X?
 

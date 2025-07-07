@@ -28,6 +28,7 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy('img');
   eleventyConfig.addPassthroughCopy('css');
   eleventyConfig.addPassthroughCopy('resume');
+  eleventyConfig.addPassthroughCopy('posts/**/*.{jpg,jpeg,png,gif,webp,svg}');
 
   return {
     dir: {

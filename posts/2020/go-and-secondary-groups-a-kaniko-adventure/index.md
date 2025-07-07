@@ -2,7 +2,7 @@
 title: "Go & secondary groups: a kaniko adventure!"
 date: 2020-04-10
 ---
-![](https://i.snap.as/jEcOae4C.jpg)
+![](jEcOae4C.jpg)
 
 I wanted to get my feet wet with understanding [Kaniko](https://github.com/GoogleContainerTools/kaniko), an open-source in-cluster builder for Docker images. I happen to work with one of the maintainers, Tejal, and I asked her if there was any interesting UNIX-internals sort of bugs that might be interesting.
 

@@ -3,14 +3,14 @@ title: "In Search of Native Lands: Intro"
 date: 2023-07-12
 ---
 In 42 hours’ time, I'm embarking on a 3-day journey through the center of North Carolina, focusing on places that were important to the Native Americans of this area:
-![](https://i.snap.as/1srrKZIG.jpg)
+![](1srrKZIG.jpg)
  
 My weapon of choice is the BMW CE-04 - an electric two-wheeler, which is why you see charging stops scattered around every 45-60 miles:
 
 <!--more-->
 
 
-![](https://i.snap.as/mSQ0HCWT.jpg) 
+![](mSQ0HCWT.jpg) 
 
 The charging stops have been strategically placed in towns I'd like to explore by foot, so expect to see a lot of small-town action. The route is flexible, but planned stops include:
 

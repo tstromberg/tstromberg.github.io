@@ -6,7 +6,7 @@ In the 1930s, Vinzenz Grünvogel designed the _Wehrmacht-Einheitskanister_: an i
 
 This project shares none of those attributes.
 
-![](https://i.snap.as/rvh9B0ox.jpg)
+![](rvh9B0ox.jpg)
 
 <!--more-->
 
@@ -19,7 +19,7 @@ Before I bought the[ BMW CE-04](https://www.bmwmotorcycles.com/en/models/urban_m
 * 55mph (90km/h) → 60 miles (95 km) of range
 * 75mph (120km/h) → 40 miles (65 km) of range
 
-![](https://i.snap.as/CTLEu5Y1.jpg)
+![](CTLEu5Y1.jpg)
 
 Unlike larger EVs, this scooter does not give you a range estimate for a destination or direct you to EV chargers when running low. If you are going to use a short-range EV for long-distance trips, you will need to plan ahead using tools like[ ABetterRoutePlanner](https://abetterrouteplanner.com/) and PlugShare.
 
@@ -33,7 +33,7 @@ It’s easy enough to find large power banks: Jackery, Anker, EcoFlow, and Goal-
 
 ### Early experiments were full of fail
 
-![](https://i.snap.as/2lkNRGdu.jpg)
+![](2lkNRGdu.jpg)
 
 My first experiments went poorly: both the BMW (Delphi) EV charger and the Tesla Mobile Connector refused to charge from the Jackery 1000 due to the lack of proper ground. I soon learned that the[ SAE J1772](https://en.wikipedia.org/wiki/SAE_J1772) EV charger specifications required ground monitoring for safety reasons.
 
@@ -57,7 +57,7 @@ There is no comprehensive list of EVSE cables that can be used without a ground,
 * Toyota Prius PHEV cable
 * Honda Clarity PHEV cable
 
-![](https://i.snap.as/Mcm4YXHJ.jpg)
+![](Mcm4YXHJ.jpg)
 
 I looked at the cheapest EVSE cables on Amazon and found one that seemed perfect: a 13ft “travel” cord that supported 220V/110V and allowed ground monitoring to be toggled:[ Sankaba Level 2 EV Charger,16Amp EV Charger Station,NEMA 5-20 Plug EV Charger Level 2,100-240v Portable EV Charger](https://www.amazon.com/dp/B0BBPNGPML?psc=1&ref=ppx_yo2ov_dt_b_product_details)
 
@@ -75,19 +75,19 @@ I bought the Sankaba, and it works just fine with the Jackery 1000 out of the bo
 
 I expected the Jackery 1000 would be barely too tall to fit in the helmet compartment on the CE-04, but I was confident I could remove the top handle if it became a problem. When I received the unit, I learned I was right:
 
-![](https://i.snap.as/zvB63J21.jpg)
+![](zvB63J21.jpg)
 
 I found a[ teardown video](https://www.youtube.com/watch?v=AKxt4eAwKRU&t=238s) for the Jackery and was happy to see that the handle was empty plastic, so I took a hacksaw to it:
 
-![](https://i.snap.as/MHp8Ob11.jpg)
+![](MHp8Ob11.jpg)
 
 With that, the Jackery fits just barely in the helmet compartment. I sanded down the leftover corners of the handle to improve clearance and even added a carrying strap.
 
-![](https://i.snap.as/yhAfzJdd.jpg)
+![](yhAfzJdd.jpg)
 
 ### The finished product
 
-![](https://i.snap.as/ngBwOroN.jpg)
+![](ngBwOroN.jpg)
 
 Once assembled, using the Jackery Electric JerryCan is easy:
 
@@ -100,7 +100,7 @@ It takes about 45 minutes to fully discharge the Jackery’s battery fully over 
 
 As the auxiliary battery takes up nearly the entire helmet compartment, I store the EVSE cable in my top case with other emergency tools:
 
-![](https://i.snap.as/mCH3LZOR.jpg)
+![](mCH3LZOR.jpg)
 
 ### Bill of Materials
 

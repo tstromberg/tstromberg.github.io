@@ -2,7 +2,7 @@
 title: "DIY Linux Kernel Rootkit Detection"
 date: 2023-03-04
 ---
-![](https://i.snap.as/uzmvIJhe.jpg)
+![](uzmvIJhe.jpg)
 
 Today I will teach you how to roll your own detection of a classic Linux kernel rootkit using shell scripting (for explanation) and osquery (for production).
 

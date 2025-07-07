@@ -4,7 +4,7 @@ date: 2023-11-04
 ---
 At my current employer, nation-state actors are part of our threat model. So, I get a little excited when someone posts malware that is tied to one of the big-4 (China, North Korea, Russia, United States of America). Last week, Elastic Security Labs posted an article titled [DPRK passing out KANDYKORN](https://www.elastic.co/security-labs/elastic-catches-dprk-passing-out-kandykorn) outlining the latest macOS malware discovery from North Korea, and this week a sample appeared in the [Objective-See Malware collection](https://github.com/objective-see/Malware) for inspection.
 
-![](https://i.snap.as/ZPNXRdih.webp)
+![](ZPNXRdih.webp)
 
 I threw our [YARA](https://yara.readthedocs.io/en/v3.4.0/index.html) queries at Kandy Korn, and found that 2 of the 3 binaries were identified as suspicious:
 

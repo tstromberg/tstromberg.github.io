@@ -3,7 +3,7 @@ title: "Motivating Software Engineering Teams"
 date: 2021-03-09
 ---
 
-![](https://i.snap.as/dYE1fHaq.jpg)
+![](dYE1fHaq.jpg)
 
 In my experience as a software engineer and a software engineering manager, I’ve found that the best way to motivate software engineers is with **empathy, purpose, and a sense of craftsmanship**. Conversely, the most effective way to demotivate a software engineering team over the long term is with excessive process and deadlines.
 

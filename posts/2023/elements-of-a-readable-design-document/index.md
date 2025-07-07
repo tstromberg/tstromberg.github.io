@@ -12,7 +12,7 @@ Submitting ideas to the scrutiny of peer review is your team's best defense agai
 
 All humans have blind spots. Your goal as an author is to gather enough input to reveal them before execution. Issues found during design are [6X cheaper](https://www.researchgate.net/publication/255965523_Integrating_Software_Assurance_into_the_Software_Development_Life_Cycle_SDLC) to fix than during implementation:
 
-![](https://i.snap.as/tN45o8UW.png)
+![](tN45o8UW.png)
 
 The questions that reviewers should have in their mind while reading the document are:
 
@@ -91,7 +91,7 @@ Bonus points if you add a hyperlink to the authoritative data source.
 
 Use this one strange trick to make your design doc memorable and encourage further reading: add an image.
 
-![](https://i.snap.as/NBuZa0uF.jpg)
+![](NBuZa0uF.jpg)
 
 It doesn't really matter what the image is, but consider adding a simple diagram to convey how your system interacts with others. If you can't come up with a diagram, insert a relevant meme or photo of your dog. People will remember it.
 

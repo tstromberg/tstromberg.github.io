@@ -2,7 +2,7 @@
 title: "Persistent multi-user Docker on macOS"
 date: 2021-02-01
 ---
-![](https://i.snap.as/o4QoLGWZ.webp)
+![](o4QoLGWZ.webp)
 
 Ever wanted to run Docker on an unmanned macOS machine, where all users could have access to a working Docker command-line?
 

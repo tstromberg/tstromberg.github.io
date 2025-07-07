@@ -2,7 +2,7 @@
 title: "OpenBSD on the Framework laptop"
 date: 2022-01-21
 ---
-![Framework laptop outside](https://i.snap.as/SCBz5x15.jpg)
+![Framework laptop outside](SCBz5x15.jpg)
 
 While preparing for my first week at [Chainguard](https://chainguard.dev/), the CEO mentioned that I should order my own laptop. As a \~15 person startup, there isn't an IT department to handle these sorts of things.
 
@@ -20,13 +20,13 @@ OpenBSD has always been a contumacious alternative, particularly on a laptop. Th
 
 ## Assembly
 
-![](https://i.snap.as/9bk4VhFN.jpg)
+![](9bk4VhFN.jpg)
 
 ![Framework Laptop Opened Up](framework-laptop-open.jpg)
 
 The Framework laptops come in two varieties: a pre-assembled laptop with Windows, and a DIY laptop without an OS. Since I wasn't planning on running Windows, I opted for the DIY version to save money. I won't repeat what is already in the excellent [Framework Laptop DIY Edition Quick Start Guide](https://guides.frame.work/Guide/Framework+Laptop+DIY+Edition+Quick+Start+Guide/57), but I'll share some notes.
 
-![](https://i.snap.as/mOqFWFLn.jpg)![Installing the network card](network-card-install.jpg)
+![](mOqFWFLn.jpg)![Installing the network card](network-card-install.jpg)
 
 Difficulty levels:
 
@@ -34,7 +34,7 @@ Difficulty levels:
 * Storage: easy to add
 * Wireless: easy to screw up once
 * I/O ports: Trivial (I opted for 3 USB-C ports and 1 USB-A port)
-* ![](https://i.snap.as/o6czeU7r.jpg)
+* ![](o6czeU7r.jpg)
 
 ![Framework I/O port installation](framework-laptop-io-install.jpg)
 
@@ -91,7 +91,7 @@ sudo dd if=install70.img of=/dev/disk4 bs=1m                                    
 
 ## First Boot
 
-![](https://i.snap.as/7VJ1sOiP.jpg)
+![](7VJ1sOiP.jpg)
 
 During the first boot, I found myself staring at a black screen for a few minutes. It turns out that this weird behavior is expected when booting a standard open-source operating system due to Secure Boot.
 
@@ -104,7 +104,7 @@ Welcome to the OpenBSD/amd64 7.9 installation program.
 
 Since this is a corporate laptop, I certainly wanted to use Full Disk Encryption. I followed the [OpenBSD Full Disk Encryption](https://www.openbsd.org/faq/faq14.html#softraidFDE), which meant selecting the `(S)hell` option.
 
-![](https://i.snap.as/NLzA0zLE.jpg)
+![](NLzA0zLE.jpg)
 
 While setting up the disks, the laptop suddenly lost power. What The Fudge? I was pretty sure it was related to my hardware, as I wasn't fully confident about was the DIMM insertion, so I attempted a RAM dance (something I learned from working in a Google Datacenter over a decade ago), but it happened again.
 
@@ -116,7 +116,7 @@ One post-installation surprise was that the Intel Wireless card didn't work - du
 
 ## Post-Installation
 
-![](https://i.snap.as/nFsNRGrR.jpg)
+![](nFsNRGrR.jpg)
 
 I floundered about for a bit trying to choose which desktop environment to use, but eventually settled on [XFCE](https://xfce.org/). I never did get Gnome to work, but MATE worked properly once I ran:
 

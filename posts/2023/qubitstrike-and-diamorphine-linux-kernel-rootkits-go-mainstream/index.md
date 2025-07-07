@@ -4,7 +4,7 @@ date: 2023-10-21
 ---
 Earlier this week, I stumbled into [Cado's report on Qubitstrike](https://www.cadosecurity.com/qubitstrike-an-emerging-malware-campaign-targeting-jupyter-notebooks/), an attack on publicly accessible [Jupyter notebook](https://jupyter.org/) installations. Unlike most security reports, the hosted malware files were still available, which meant I could analyze and validate our defenses against it. Normally, I don't get this opportunity to study emerging threats, as I'm not paying the $20,000/yr paywall fee for access to Google's VirusTotal service that most researchers seem to rely on.
 
-![](https://i.snap.as/KuU2dMIe.webp)
+![](KuU2dMIe.webp)
 
 <!--more-->
 
@@ -47,7 +47,7 @@ Even the initialization part of the script contains multiple detection opportuni
 
 ### Fetch Tools
 
-![](https://i.snap.as/jsHYhB4p.png)
+![](jsHYhB4p.png)
 
 I'm now going to show the installer output in [debug mode (using `bash -x)`](https://tldp.org/LDP/Bash-Beginners-Guide/html/sect_02_03.html), as it usually makes the behavior easier to discern. If you are on a Linux distro that has "apt", "yum", or "apk" package manager available, the script will install curl or wget for you:
 
@@ -143,7 +143,7 @@ Then, it begins disabling the shell command history. First, by hiding all comman
 + HISTCONTROL=ignorespace
 ```
 
-![](https://i.snap.as/qkVrmeCD.jpg)
+![](qkVrmeCD.jpg)
 
 HISTCONTROL=ignorespace is an entirely new feature to me ([why does it even exist?](https://unix.stackexchange.com/questions/115934/why-does-bash-have-a-histcontrol-ignorespace-option)). The script then disables the history file altogether via a variety of mechanisms, making that setting useless anyways.
 
@@ -180,7 +180,7 @@ grep -q 8.8.4.4 /etc/resolv.conf || chattr -i /etc/resolv.conf 2>/dev/null 1>/de
 
 ### Squeezing out the competition
 
-![](https://i.snap.as/kSYk4Avb.webp)
+![](kSYk4Avb.webp)
 
 The firewall rules are reprogrammed to drop packets to and from competing miners:
 
@@ -269,7 +269,7 @@ Unsurprisingly, the program is [`XMRig`](https://xmrig.com/) - the most popular 
 
 Rather than implementing its own detectable backdoor, QubitStrike makes the wise decision to use [OpenSSH](https://www.openssh.com/), which is already likely on the system. This works nicely since we already know from the attack profile that the machine is on the Internet, and we've already flushed the firewall that may have prevented external SSH access.
 
-![](https://i.snap.as/l4InqXJW.jpg)
+![](l4InqXJW.jpg)
 
 The attacker plugs in their SSH credentials (likely from a [Kali Linux](https://www.kali.org/) machine), disables the [tcpwrapper](https://en.wikipedia.org/wiki/TCP_Wrappers) controls, reconfigures sshd to allow remote root login, and starts it up. I'm not sure what the "Port 78" reference is all about, but I assume they are disabling a backdoor configuration from a competing crypto miner.
 
@@ -294,7 +294,7 @@ The attacker plugs in their SSH credentials (likely from a [Kali Linux](https://
 
 ### Phoning home
 
-![](https://i.snap.as/7P7847lO.jpg)
+![](7P7847lO.jpg)
 
 Qubitstrike collects some information about the health of the miner and the backdoor and then sends it to a [Telegram](https://telegram.org/) channel:
 
@@ -316,7 +316,7 @@ root        4088  192  0.1  42216  4768 ?        Ssl  18:24   0:02 /usr/share/.L
 
 The most disappointing part of the script is how it steals and sends credentials. Their approach is exceptionally slow: It crawls the filesystem separately for each credential type rather than using the find commands native support for finding multiple names. I blame the fin[d command's bizarre syntax and poorly written documentation](https://man7.org/linux/man-pages/man1/find.1.html), as it took me a couple of attempts to get it correct myself. 
 
-![](https://i.snap.as/7Z1S4bxi.png)
+![](7Z1S4bxi.png)
 
 ```shell
 + CRED_FILE_NAMES=("credentials" "cloud" ".s3cfg" ".passwd-s3fs" "authinfo2" ".s3backer_passwd" ".s3b_config" "s3proxy.conf" "access_tokens.db" "credentials.db" ".smbclient.conf" ".smbcredentials" ".samba_credentials" ".pgpass" "secrets" ".boto" ".netrc" ".git-credentials" "api_key" "censys.cfg" "ngrok.yml" "filezilla.xml" "recentservers.xml" "queue.sqlite3" "servlist.conf" "accounts.xml" "azure.json" "kube-env")
@@ -347,7 +347,7 @@ Safety reminder: never mount your personal home directory to your malware VMs, a
 
 ## The kernel-level rootkit: Diamorphine
 
-![](https://i.snap.as/8SIolL5k.png)
+![](8SIolL5k.png)
 
 Here's where Qubitstrike gets interesting. This is the first time I've seen a casual miner with a Linux rootkit that works on a modern Ubuntu release:
 
@@ -430,7 +430,7 @@ In 99% of environments, this file shouldn't exist. Check for it.
 
 ## Establishing Persistence
 
-![](https://i.snap.as/aArwlOKd.webp)
+![](aArwlOKd.webp)
 
 QubitStrike will establish persistence through cron. First, it grabs the killer script, which shares the same competition killers we saw before, from Codeberg, and installs it to cron:
 
@@ -464,7 +464,7 @@ Once a day, it starts the QubitStrike installer again using the latest code. Sin
 
 ## The viral component of QubitStrike
 
-![](https://i.snap.as/CV7Rixe9.png)
+![](CV7Rixe9.png)
 
 One of the surprising features of QubitStrike is that it will attempt to replicate itself to any systems it finds in `/root/.ssh/known_hosts`:
 
@@ -493,7 +493,7 @@ It does not do anything about truncating systemd logs, though.
 
 ## Detecting Qubitstrike from a shell
 
-![](https://i.snap.as/KVms6GJG.png)
+![](KVms6GJG.png)
 
 On Linux, process hiders are hilariously simple to detect. In my experience, ro rootkits bother to hide all of the /proc lookup points, preferring instead to just hide from the /proc directory list.
 
@@ -575,7 +575,7 @@ It's also easy to detect the SSH keys, hidden directories, and crontab entries -
 
 Some of you might know that I also maintain the [osquery-defense-kit](https://github.com/chainguard-dev/osquery-defense-kit) project, something I've put together in my time at [Chainguard](https://chainguard.dev/). It's a collection of production-quality queries to uncover suspicious behavior using [osquery](https://www.osquery.io/).
 
-![](https://i.snap.as/ttv2DxWz.png)
+![](ttv2DxWz.png)
 
 `osquery-defense-toolkit` has a handy `make detect` target to run all the scripts. Here's what pops up on a machine with Qubitstrike:
 
@@ -639,7 +639,7 @@ These queries were written way before QubitStrike ever existed; they just happen
 
 ## Detecting Qubitstrike with YARA
 
-![](https://i.snap.as/9grhf7eX.png)
+![](9grhf7eX.png)
 
 The original article by Cado had a very specific rule for the QubitStrike installer. Still, it's worth mentioning that generic malware detection rules that predate QubitStrike are equally as good at detecting not just the QubitStrike, but also the files it installs: Using a set of general-purpose YARA rules I plan to open-source, the QubitStrike installer triggered a record 22 different rules:
 

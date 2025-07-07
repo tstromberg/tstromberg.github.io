@@ -3,7 +3,7 @@ title: "Motivating Software Engineering Teams"
 date: 2021-03-09
 description: "Empathy, purpose, craftsmanship.           Empathy   The key to motivating a team is to identify what..."
 slug: swe-motivation
-main_image: https://dev-to-uploads.s3.amazonaws.com/uploads/articles/slx1m93mh9ctb3kdfzg3.jpg
+main_image: slx1m93mh9ctb3kdfzg3.jpg
 tags:
     - tech
 ---

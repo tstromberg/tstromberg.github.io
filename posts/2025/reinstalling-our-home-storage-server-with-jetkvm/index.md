@@ -10,7 +10,7 @@ One thing I hate about having a home lab is needing to crawl around to fetch a k
 
 ## Setting Up the JetKVM
 
-![](https://i.snap.as/reYWlYKR.jpg)
+![](reYWlYKR.jpg)
 
 JetKVM is a tiny & cheap hardware KVM-over-IP solution that lets you remotely control servers via a web browser. I’d ordered mine months ago via Kickstarter, but today was my first shot at using it.
 
@@ -50,7 +50,7 @@ sudo dd if=$HOME/Downloads/FreeBSD-15.0-CURRENT-amd64-20250612-e6928c33f60c-2778
 
 I used the JetKVM virtual keyboard to insert the “Del” button to enter BIOS and set the boot device order up so that it would boot off of the USB stick. But wait, what’s this “JetKVM Virtual Media” device?
 
-![](https://i.snap.as/MzkNuTvW.png)
+![](MzkNuTvW.png)
 
 Then I noticed this curious “Virtual Media” button in the JetKVM screen - was it possible to upload a disk image to this thing and boot it up without worrying about USB sticks and dd commands? It turns out you can - what a game changer:
 
@@ -60,13 +60,13 @@ Then I noticed this curious “Virtual Media” button in the JetKVM screen - wa
 * Select local file, click Upload
 * Click “Mount File”
 
-![](https://i.snap.as/tptuHGa1.png)
+![](tptuHGa1.png)
 
 One quirk I discovered for FreeBSD is that only the CD/DVD ISO image boots properly via JetKVM Virtual Media, not the memstick images.
 
 ## Navigating Installation Quirks
 
-![](https://i.snap.as/JZ2KuK5n.png)
+![](JZ2KuK5n.png)
 
 It’s been nearly 30 years after my first FreeBSD installation (2.2.0), and I still find new quirks that cause me to go into menu loops. This time it did not like that my system already had a “zroot” pool defined. This was easy enough to fix by selecting the “Shell” option from the partitioning menu:
 
@@ -77,7 +77,7 @@ zpool destroy zroot
 
 After that, the rest was smooth sailing.
 
-![](https://i.snap.as/7uQwCNof.png)
+![](7uQwCNof.png)
 
 ## Configuring Remote Access
 
@@ -185,7 +185,7 @@ Now any system changes I make will be automatically translated into git commits.
 
 The FreeBSD “CURRENT” stream is considered “alpha” quality and well-known for stability issues. Even so, I was surprised to get a panic so quickly, induced by my attempt to sync terrabytes worth of data to an external drive via USB 3.0:
 
-![](https://i.snap.as/2TlmwQiF.png)
+![](2TlmwQiF.png)
 
 The JetKVM proved its worth here too - as it made persistent out-of-band access to my server a painless affair. Otherwise, I would have had to fetch a monitor out to see the panic message.
 

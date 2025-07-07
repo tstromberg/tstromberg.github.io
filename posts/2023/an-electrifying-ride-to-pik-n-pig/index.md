@@ -38,7 +38,7 @@ A burek is typically served for breakfast and made its way to Serbia via Turkey 
 
 I never turn down Turkish Coffee when available, and this place delivered. Eventually, though, if I were going to make it in time for the ADVrider lunch and the route I had in mind, I would have to head out. Unfortunately, while leaving out the back entrance onto East St, I had the closest call yet on my scooter.
 
-[![Untitled_Artwork.jpg](https://www.advrider.com/f/data/attachments/4598/4598515-75523004956e1eb7ca651105982d449d.jpg)](https://www.advrider.com/f/attachments/untitled_artwork-jpg.4812403/)
+[![Untitled_Artwork.jpg](4598515-75523004956e1eb7ca651105982d449d.jpg)](https://www.advrider.com/f/attachments/untitled_artwork-jpg.4812403/)
 
 East St is a busy road. Back when I lived out here 20 years ago, it was known as Highway 64, but that road has since bypassed downtown. I knew there would only be a brief moment in time where the gap was big enough to make a left out of here, so I scooted as far down the gravel driveway as I could. Unfortunately, in doing so, my sight lines were significantly blocked by the two cars that were parked to my left. I looked at the gaps between the trees and the cars, and tried to count how many cars I saw entering and exiting the gaps so that I would know when the gap was close enough to enter.
 
