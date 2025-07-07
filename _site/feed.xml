@@ -14,7 +14,7 @@
     <link href="https://choosehappy.dev/posts/2025/llms-doing-the-dirty-blog-work/"/>
     <updated>2025-07-07T00:00:00Z</updated>
     <id>https://choosehappy.dev/posts/2025/llms-doing-the-dirty-blog-work/</id>
-    <content xml:lang="en" type="html">&lt;p&gt;After years of content scattered across three sites, I got tired of deciding which abandoned domain to publish to. My Hugo blog at libthom.so had technical posts, unfinished.bike had motorcycle adventures, and stromberg.org/t held random static HTML pages. Time to consolidate.&lt;/p&gt;
+    <content xml:lang="en" type="html">&lt;p&gt;After years of content scattered across three sites, I got tired of deciding which abandoned domain to publish to. My Hugo blog at &lt;code&gt;libthom.so&lt;/code&gt; had forgotten technical philosophy posts, &lt;code&gt;unfinished.bike&lt;/code&gt; had motorcycle adventures, and &lt;code&gt;stromberg.org/t&lt;/code&gt; held random static HTML pages. Time to consolidate!&lt;/p&gt;
 &lt;p&gt;There&#39;s a classic developer trap: you want to write a blog post, so instead you write a new blog engine. I was about to fall into the modern AI equivalent - getting an LLM to rebuild my website from scratch.&lt;/p&gt;
 &lt;h2&gt;Windsurf: npm install hell&lt;/h2&gt;
 &lt;p&gt;I started with Windsurf since I&#39;d heard good things. My prompt was straightforward:&lt;/p&gt;

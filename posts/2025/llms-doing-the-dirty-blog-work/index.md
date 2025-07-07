@@ -3,13 +3,13 @@ title: "Using LLMs to do dirty blog work"
 date: 2025-07-07
 ---
 
-After years of content scattered across three sites, I got tired of deciding which abandoned domain to publish to. My Hugo blog at libthom.so had technical posts, unfinished.bike had motorcycle adventures, and stromberg.org/t held random static HTML pages. Time to consolidate.
+After years of content scattered across three sites, I got tired of deciding which abandoned domain to publish to. My Hugo blog at **libthom.so** had forgotten technical philosophy posts, **unfinished.bike** had motorcycle adventures, and **stromberg.org/t** held random static HTML pages. Time to consolidate!
 
 There's a classic developer trap: you want to write a blog post, so instead you write a new blog engine. I was about to fall into the modern AI equivalent - getting an LLM to rebuild my website from scratch.
 
 ## Windsurf: npm install hell
 
-I started with Windsurf since I'd heard good things. My prompt was straightforward:
+I started the migration process with Windsurf since I'd heard good things. My prompt was straightforward:
 
 <blockquote>
 Create a personal website using 11eventy that incorporates all of the data in the import directory: my old hugo blog, my current personal website, and my write.as posts in JSON format. Blog posts should exist within a /posts/ subdirectory and support RSS feeds.
@@ -59,7 +59,7 @@ I also had to handle all of the images hosted by `i.snap.as` (the `write.as` pho
 Download each image referenced in a blog article, and store it in the directory alongside the index.md file. Update the markdown files to use the local image reference instead. This is important as the remote website may disappear some day.
 </blockquote>
 
-Claude Code wrote a Python script that found all remote image URLs across 28 blog posts, downloaded 257 images to their respective post directories, and updated all the markdown files to use local paths.
+Claude Code wrote a Python script that found all remote image URLs across all blog posts, downloaded each image to their respective post directories, and updated all the markdown files to use local paths.
 
 But when I tested the site, the images returned 404 errors:
 

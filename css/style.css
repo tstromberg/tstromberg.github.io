@@ -204,6 +204,11 @@ li {
     margin: 0.5rem 0;
 }
 
+/* Remove extra spacing from paragraphs inside list items */
+li p {
+    margin: 0;
+}
+
 /* Code */
 code {
     font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;

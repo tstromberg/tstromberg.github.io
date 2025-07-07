@@ -20,14 +20,14 @@ This is my personal website, featuring selected projects and musings on software
 
 ### actively contributing
 
-- [chainguard-dev/malcontent](http://github.com/chainguard-dev/malcontent) — supply-chain attack detection *(author)*
-- [chainguard-dev/osquery-defense-kit](http://github.com/chainguard-dev/osquery-defense-kit) — production-ready detection & response queries for osquery *(author)*
-- [chainguard-dev/yacls](http://github.com/chainguard-dev/yacls) — SaaS access review system *(author)*
 - [quietude](http://github.com/tstromberg/quietude) — distraction-free Android *(author)*
 - [livstid](http://github.com/tstromberg/livstid) — static photo website generator *(author)*
 
 ### past creations
 
+- [chainguard-dev/malcontent](http://github.com/chainguard-dev/malcontent) — supply-chain attack detection *(author)*
+- [chainguard-dev/osquery-defense-kit](http://github.com/chainguard-dev/osquery-defense-kit) — production-ready detection & response queries for osquery *(author)*
+- [chainguard-dev/yacls](http://github.com/chainguard-dev/yacls) — SaaS access review system *(author)*
 - [google/triage-party](http://github.com/google/triage-party) — Massively multiplayer GitHub triage *(author)*
 - [google/pullsheet](https://github.com/google/pullsheet) — GitHub statistics exporter *(author)*
 - [cstat](https://github.com/tstromberg/cstat) — a more civilized iostat *(author)*
@@ -47,9 +47,10 @@ This is my personal website, featuring selected projects and musings on software
 
 ## presentations
 
-- [Klustered #11 - Repairing and destroying Kubernetes Clusters](https://www.youtube.com/watch?v=ysfUgYs4YYY)
-- [Kubernetes Podcast: Minikube Redux](https://kubernetespodcast.com/episode/115-minikube-redux/) (2020)
-- [KubeCon San Diego 2019: Minikube](https://www.youtube.com/watch?v=3giynG20f3I)
-- [KubeCon Shanghai 2019: Bringing Kubernetes to the Next Billion Users](https://www.youtube.com/watch?v=ahb-_NBtOL0)
-- [KubeCon Seattle 2018: Deep Dive: Minikube](https://www.youtube.com/watch?v=46-FXiSEfE4)
-- [KubeCon Seattle 2018: Intro: Minikube](https://www.youtube.com/watch?v=2yBOVlonHQw)
+- 2025: [CackalackyCon - Supply-chain security from the trenches](https://github.com/tstromberg/supplychain-trenches?tab=readme-ov-file)
+- 2021: [Klustered #11 - Repairing and destroying Kubernetes Clusters](https://www.youtube.com/watch?v=ysfUgYs4YYY)
+- 2020: [Kubernetes Podcast: Minikube Redux](https://kubernetespodcast.com/episode/115-minikube-redux/)
+- 2019: [KubeCon San Diego: Minikube](https://www.youtube.com/watch?v=3giynG20f3I)
+- 2019: [KubeCon Shanghai: Bringing Kubernetes to the Next Billion Users](https://www.youtube.com/watch?v=ahb-_NBtOL0)
+- 2018: [KubeCon Seattle: Deep Dive: Minikube](https://www.youtube.com/watch?v=46-FXiSEfE4)
+- 2018: [KubeCon Seattle: Intro: Minikube](https://www.youtube.com/watch?v=2yBOVlonHQw)
