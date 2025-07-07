@@ -7,9 +7,9 @@ After years of content scattered across three sites, I got tired of deciding whi
 
 There's a classic developer trap: you want to write a blog post, so instead you write a new blog engine. I was about to fall into the modern AI equivalent - getting an LLM to rebuild my website from scratch.
 
-## Windsurf: npm install hell
+## Windsurf: can stop will stop
 
-I started the migration process with Windsurf since I'd heard good things. My prompt was straightforward:
+I started the migration process with Windsurf since I'd heard good things. I settled on 11eventy as my static website engine of choice, as I was tired of working with hugo, and it apparently supported RSS. My prompt was straightforward:
 
 <blockquote>
 Create a personal website using 11eventy that incorporates all of the data in the import directory: my old hugo blog, my current personal website, and my write.as posts in JSON format. Blog posts should exist within a /posts/ subdirectory and support RSS feeds.
