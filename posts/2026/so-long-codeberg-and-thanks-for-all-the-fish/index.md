@@ -3,9 +3,7 @@ title: "So long Codeberg, I hardly knew ye"
 date: 2026-07-24
 ---
 
-# So long Codeberg, I hardly knew ye
-
-Trigger: <https://blog.codeberg.org/protecting-our-floss-commons-from-llms.html>
+In response to: <https://blog.codeberg.org/protecting-our-floss-commons-from-llms.html>
 
 ![so long, and thanks for all the fish](fish.jpg)
 
