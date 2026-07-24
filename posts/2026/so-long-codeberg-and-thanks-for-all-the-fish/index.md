@@ -23,6 +23,8 @@ In comparison to GitHub, Codeberg excelled at virtue signalling the open-source 
 
 The only things I never got the hang of on Codeberg were it's Pages implementation (I never did get custom domains to work), or it's take on CI pipelines. I can only assume that Woodpecker CI is better than GitHub Actions - but since I didn't have any external contributions yet, I wasn't too concerned with CI.
 
+Codeberg vs GitHub on reliability felt similar, at least as far as Git pushes via SSH. I can only imagine how difficult it is to run a Git provider with how many round-the-clock slop-driven commits & crawls there are.
+
 ## Parsing Today's Codeberg Announcement
 
 My heart sank today when I read the "Codeberg Bans Cryptocurrency Projects" article on Hacker News. It seemed like a very arbitrary restriction, one very against my experience with open-source that says "The most successful projects are the most inclusive ones".
