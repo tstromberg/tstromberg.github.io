@@ -1,3 +1,8 @@
+---
+title: "So long Codeberg, I hardly knew ye"
+date: 2026-07-24
+---
+
 # So long Codeberg, I hardly knew ye
 
 Trigger: https://blog.codeberg.org/protecting-our-floss-commons-from-llms.html
@@ -13,8 +18,6 @@ When I began the [Atomdrift project](https://atomdrift.org/) in early 2026; I ma
 - To try something new &amp; learn what Codeberg was all about.
 
 ## My experience with Codeberg
-
-
 
 In comparison to GitHub, Codeberg excelled at virtue signalling the open-source aspect of the project, as well as providing a fun & reliable base to operate from. What Codeberg didn't seem to excel at was encouraging engagement: as best as I can tell, nobody discovered Atomdrift through Codeberg; only through other places on the Internet. The lack of an account at Codeberg was a possible impediment to engagement, but one I was OK with.
 
@@ -96,4 +99,4 @@ However, when you see a community-driven project you depend on instituting sudde
 
 In the end, the thing that matters the most to the health of an open-source project is inclusion. Whether it's the ability to constantly attract new contributors through excellent communication, or the ability to attract new users through excellent documentation.
 
-So, I guess that means I'm moving to GitHub - and writing some documentation (by hand, not by LLM).
+So, I guess that means [I'm moving to GitHub](https://github.com/atomdrift-project) - and writing some documentation (by hand, not by LLM).
