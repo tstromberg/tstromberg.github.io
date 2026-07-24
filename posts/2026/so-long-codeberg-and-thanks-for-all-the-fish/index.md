@@ -27,7 +27,7 @@ The only things I never got the hang of on Codeberg were it's Pages implementati
 
 My heart sank today when I read the "Codeberg Bans Cryptocurrency Projects" article on Hacker News. It seemed like a very arbitrary restriction, one very against my experience with open-source that says "The most successful projects are the most inclusive ones".
 
-The cherry on top was in the comments though, that pointed at another ban, described by Codeberg at (Protecting our FLOSS commons from LLMs)[https://blog.codeberg.org/protecting-our-floss-commons-from-llms.html]. There's a lot of good stuff in there, but the most difficult part to swallow was:
+The cherry on top was in the comments though, that pointed at another ban, described by Codeberg at [Protecting our FLOSS commons from LLMs](https://blog.codeberg.org/protecting-our-floss-commons-from-llms.html). There's a lot of good stuff in there, but the most difficult part to swallow was:
 
 * Projects that are created by LLM "agents" in autonomous ways
 * Projects written and maintained with heavy use of LLMs
