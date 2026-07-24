@@ -99,6 +99,8 @@ I know I'm just a small fish, just some Internet rando with a bizarre set of ope
 
 However, when you see a community-driven project you depend on instituting sudden bans, you should be worried! It's not any different than a homeowners association that picks new rules based on a vote of who's present at that month's meeting. Not only will you feel uneasy building your community on unsteady ground, but so will every one else there.
 
-In the end, the thing that matters the most to the health of an open-source project is inclusion. Whether it's the ability to constantly attract new contributors through excellent communication, or the ability to attract new users through excellent documentation.
+I wish Codeberg the best of luck, but in my experience: projects that aren't inclusive are eventually replaced by those that are.
+
+Whether it's the ability to constantly attract new contributors through excellent communication, or the ability to attract new users through excellent documentation, projects need a sense of life and movement to survive in the long run.
 
 So, I guess that means [I'm moving to GitHub](https://github.com/atomdrift-project) - and writing some documentation (by hand, not by LLM).
