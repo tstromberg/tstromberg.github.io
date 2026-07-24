@@ -1,4 +1,4 @@
-## So long Codeberg, I hardly knew ye
+# So long Codeberg, I hardly knew ye
 
 Trigger: https://blog.codeberg.org/protecting-our-floss-commons-from-llms.html
 
